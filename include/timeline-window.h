@@ -4,14 +4,14 @@
 #include <wx/wx.h>
 #include <wx/slider.h>
 
+#include <iostream>
 
+//number in units of pixels
 enum
     {
-        // these numbers are not multiple of 10 (our scroll step) to test for
-        // the absence of rounding errors (e.g. we should have one more page
-        // than WIDTH/10 to show the right side of the rectangle)
-        WIDTH = 792,
-        HEIGHT = 297
+        TRACK_WIDTH = 792,
+        TRACK_HEIGHT = 297,
+        SLIDER_START_X = 50
     };
 
 class TimelineWindow : public wxScrolled<wxWindow>
