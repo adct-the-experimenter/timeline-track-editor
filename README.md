@@ -1,16 +1,18 @@
 # Timeline Track Editor
 This is a general GUI template that has a timeline and track editor for anyone to use to get started on their project.
-A timeline in the GUI of an application is something that many people used and needed, 
-but there was not free open-source code available that was easy to implement.
+A timeline in the GUI of an application is something that many people have used and needed, 
+but there was not free open-source code available that was easy to copy and implement.
 
-# Required Libraries
+This project aims to provide an easy-to-integrate timeline track editor that is not application specific.
+
+# Required Librarie
 
 wxwidgets https://www.wxwidgets.org/
 
 
 # How to Install
 
-1. Install required libraries.
+1. Install the required library.
 2. Clone this repository
 3. cd timeline-track-editor
 4. mkdir build
