@@ -5,7 +5,7 @@ but there was not free open-source code available that was easy to copy and impl
 
 This project aims to provide an easy-to-integrate timeline track editor that is not application specific.
 
-# Required Librarie
+# Required Library
 
 wxwidgets https://www.wxwidgets.org/
 
