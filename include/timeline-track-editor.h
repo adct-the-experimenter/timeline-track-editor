@@ -5,7 +5,7 @@
     #include <wx/wx.h>
 #endif
 
-#include "timeline-ruler.h"
+#include "timeline-window.h"
 
 //override wxApp to initialize program 
 class MyApp: public wxApp
@@ -32,3 +32,4 @@ enum
 {
     ID_Hello = 1
 };
+

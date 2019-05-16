@@ -29,7 +29,7 @@ set ( PROJECT_INCLUDE_DIR ${wxWidgets_INCLUDE_DIRS} )
 include_directories(/usr/include /usr/local/include ./include ${PROJECT_INCLUDE_DIR})
 
 set(SOURCES src/timeline-track-editor.cpp
-			src/timeline-ruler.cpp
+			src/timeline-window.cpp
 			 )
 
 #get_cmake_property(_variableNames VARIABLES)

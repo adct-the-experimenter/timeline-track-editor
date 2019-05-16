@@ -17,8 +17,9 @@ bool MyApp::OnInit()
 	//window title: hello world
 	//size: wxSize(450, 340)
 	//location: wxPoint(50, 50)
-    MyFrame *frame = new MyFrame( "Hello World", wxPoint(50, 50), wxSize(450, 340) );
+    MyFrame *frame = new MyFrame( "The Name of the Application here", wxPoint(50, 50), wxSize(450, 340) );
     frame->Show( true );
+    
     return true;
 }
 
@@ -44,10 +45,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     SetMenuBar( menuBar );
     
     CreateStatusBar();
-    SetStatusText( "Welcome to wxWidgets!" );
+    SetStatusText( "Welcome to your app!" );
     
-    TimelineSlider *slider = new TimelineSlider(wxT("Slider"));
-    slider->Show(true);
+    TimelineWindow *timeWindow = new TimelineWindow(this);
+    timeWindow->Show(true);
 
 }
 
