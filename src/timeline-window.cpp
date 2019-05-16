@@ -3,7 +3,7 @@
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
 	
-	fill = 0;
+	m_slider_value = 0;
 	
 	SetScrollRate( 10, 10 );
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT );
@@ -22,13 +22,12 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 
 void TimelineWindow::OnScroll(wxScrollEvent& event)
 {
-	fill = slider->GetValue();
+	m_slider_value = slider->GetValue();
 	Refresh();
 }
 
 void TimelineWindow::OnSize(wxSizeEvent& event)
 {
-	
 	Refresh();
 }
 
@@ -52,7 +51,7 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	this->GetScrollPixelsPerUnit(&x_units,&y_units);
 	
 	//x coordinate of vertical line representing current position in time
-	wxCoord x = SLIDER_START_X + 18 + (fill * (0.5*x_units + 0.05));
+	wxCoord x = SLIDER_START_X + 18 + (m_slider_value * (0.5*x_units + 0.05));
 	
 	dc.DrawRectangle( wxRect(x, 0, 2, 200) );
 	

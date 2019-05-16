@@ -24,7 +24,7 @@ public:
 	void OnSize(wxSizeEvent& event);
 	
     wxSlider *slider;
-    int fill;
+    int m_slider_value;
 private:
 	int max_timeline_size;
 	
