@@ -6,12 +6,14 @@
 
 #include <iostream>
 
-//number in units of pixels
+
 enum
     {
-        TRACK_WIDTH = 792,
-        TRACK_HEIGHT = 297,
-        SLIDER_START_X = 50
+        TRACK_WIDTH = 792, //in pixels
+        TRACK_HEIGHT = 297, //in pixels
+        SLIDER_START_X = 50, //in pixels
+        SLIDER_START_VALUE = 0, 
+        SLIDER_END_VALUE = 100 //does not yet work for values other than 100, slider offset fails
     };
 
 class TimelineWindow : public wxScrolled<wxWindow>

@@ -10,7 +10,7 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
     SetBackgroundColour( *wxWHITE );
 
 	int slider_width = TRACK_WIDTH - 50; //width of slider
-	slider = new wxSlider(this, ID_SLIDER, 0, 0, 140, wxPoint(SLIDER_START_X, 30), wxSize(slider_width, -1), wxSL_HORIZONTAL);
+	slider = new wxSlider(this, ID_SLIDER, 0, SLIDER_START_VALUE, SLIDER_END_VALUE, wxPoint(SLIDER_START_X, 30), wxSize(slider_width, -1), wxSL_HORIZONTAL);
 	
 	Connect(ID_SLIDER, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler(TimelineWindow::OnScroll));  
 	Connect(wxEVT_PAINT, wxPaintEventHandler(TimelineWindow::OnPaint));
@@ -47,11 +47,9 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	wxSize size = GetSize();
 	int width = TRACK_WIDTH;
 	
-	int x_units,y_units;
-	this->GetScrollPixelsPerUnit(&x_units,&y_units);
-	
 	//x coordinate of vertical line representing current position in time
-	wxCoord x = SLIDER_START_X + 18 + (m_slider_value * (0.5*x_units + 0.05));
+	int offset_slider = 20;
+	wxCoord x = SLIDER_START_X + offset_slider +( (TRACK_WIDTH / SLIDER_END_VALUE) * (m_slider_value));
 	
 	dc.DrawRectangle( wxRect(x, 0, 2, 200) );
 	
