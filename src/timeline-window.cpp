@@ -3,16 +3,15 @@
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
 
-	m_slider_value = 0;
-	m_time_num.resize(9);
-	m_time_num = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 }; //time in seconds
+	
+	TimelineWindow::InitTimeline();
 	
 	SetScrollRate( 10, 10 ); //how many pixels to increment when scrolling
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT ); //actual size of what will be scrolled
     SetBackgroundColour( *wxWHITE );
 
 	
-	slider = new wxSlider(this, ID_SLIDER, 0, SLIDER_START_VALUE, TRACK_WIDTH, wxPoint(SLIDER_START_X, 30), wxSize(TRACK_WIDTH, -1), wxSL_HORIZONTAL);
+	slider = new wxSlider(this, ID_SLIDER, 0, 0, TRACK_WIDTH, wxPoint(slider_start_x_pos, 30), wxSize(TRACK_WIDTH, -1), wxSL_HORIZONTAL);
 	
 	Connect(ID_SLIDER, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler(TimelineWindow::OnScroll));  
 	Connect(wxEVT_PAINT, wxPaintEventHandler(TimelineWindow::OnPaint));
@@ -20,6 +19,43 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	
 	Center();
 }
+
+void TimelineWindow::InitTimeline()
+{
+	m_slider_value = 0;
+	
+	//intialize m_time_num
+	TimelineWindow::InitTimeVector();
+	
+	slider_start_x_pos = TRACK_WIDTH / (TIME_TICK_NUM - 1);
+	
+	
+}
+
+void TimelineWindow::InitTimeVector()
+{
+	//get linearly spaced vector of doubles
+	std::vector <double> thisVector = TimelineWindow::LinearSpacedArray(TIME_START_VALUE,TIME_END_VALUE,TIME_TICK_NUM);
+	
+	for(size_t i=0; i < thisVector.size(); ++i)
+	{
+		m_time_num.push_back((int)thisVector[i]);
+	}
+}
+
+std::vector<double> TimelineWindow::LinearSpacedArray(double a, double b, std::size_t N)
+{
+	// Linear interpolation following MATLAB linspace
+	double h = (b - a) / static_cast<double>(N-1);
+	std::vector<double> xs(N);
+	std::vector<double>::iterator x;
+	double val;
+	for (x = xs.begin(), val = a; x != xs.end(); ++x, val += h) {
+		*x = val;
+	}
+	return xs;
+}
+
 
 void TimelineWindow::OnScroll(wxScrollEvent& event)
 {
@@ -48,7 +84,7 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	
 	
 	//x coordinate of vertical line representing current position in time
-	wxCoord x = m_slider_value + SLIDER_START_X;
+	wxCoord x = m_slider_value + slider_start_x_pos;
 	
 	dc.DrawRectangle( wxRect(x, 0, 2, VERTICAL_LINE_HEIGHT_TIME) );
 	
@@ -59,8 +95,8 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
             wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
 	dc.SetFont(font);
 	
-	int width = TRACK_WIDTH;
-	int step = (int) round(width / 10);
+	
+	int step = (int) round(TRACK_WIDTH / 10);
 
 	dc.SetPen(wxPen(wxColour(90, 80, 60)));
 	

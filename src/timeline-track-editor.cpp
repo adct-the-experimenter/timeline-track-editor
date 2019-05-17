@@ -45,7 +45,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     SetMenuBar( menuBar );
     
     CreateStatusBar();
-    SetStatusText( "Welcome to your app!" );
+    SetStatusText( "Welcome to the app!" );
     
     TimelineWindow *timeWindow = new TimelineWindow(this);
     timeWindow->Show(true);
@@ -62,12 +62,12 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 	//show message box with ok icon, 
 	//window title:about hello world
 	//message: This is a wxWidgets Helo world sample
-    wxMessageBox( "This is a wxWidgets' Hello world sample",
-                  "About Hello World", wxOK | wxICON_INFORMATION );
+    wxMessageBox( "This is a sample to use for your project",
+                  "About the Project", wxOK | wxICON_INFORMATION );
 }
 
 void MyFrame::OnHello(wxCommandEvent& event)
 {
 	//show message
-    wxLogMessage("Hello world from wxWidgets!");
+    wxLogMessage("Hello world!");
 }
