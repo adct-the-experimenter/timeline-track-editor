@@ -47,8 +47,12 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     CreateStatusBar();
     SetStatusText( "Welcome to the app!" );
     
-    TimelineWindow *timeWindow = new TimelineWindow(this);
-    timeWindow->Show(true);
+    //Initialize TimelineWindow if you want Timeline inside the window
+    
+    //Initialize TimelineFrame if you want Timeline outside of the window
+    
+    TimelineFrame *timeFrame = new TimelineFrame(this);
+    timeFrame->Show(true);
 
 }
 

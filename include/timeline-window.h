@@ -28,7 +28,7 @@ public:
     
 private:
 	
-	wxSlider *slider;
+	wxSlider *m_slider;
     int m_slider_value;
     
 	std::vector <int> m_time_num; // numbers to display on ruler

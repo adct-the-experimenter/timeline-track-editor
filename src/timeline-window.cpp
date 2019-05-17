@@ -1,22 +1,37 @@
 #include "timeline-window.h"
 
+
+TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Timeline Frame")
+{
+	new TimelineWindow(this);
+	
+	// ensure that we have scrollbars initially
+	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT/2);
+	
+	Show();
+}
+
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
-
-	
-	TimelineWindow::InitTimeline();
 	
 	SetScrollRate( 10, 10 ); //how many pixels to increment when scrolling
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT ); //actual size of what will be scrolled
     SetBackgroundColour( *wxWHITE );
 
 	
-	slider = new wxSlider(this, ID_SLIDER, 0, 0, TRACK_WIDTH, wxPoint(slider_start_x_pos, 30), wxSize(TRACK_WIDTH, -1), wxSL_HORIZONTAL);
-	
 	Connect(ID_SLIDER, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler(TimelineWindow::OnScroll));  
 	Connect(wxEVT_PAINT, wxPaintEventHandler(TimelineWindow::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(TimelineWindow::OnSize));
 	
+	TimelineWindow::InitTimeline();
+	
+	//make horizontal box to put names in
+	wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
+	
+	//add slider to box
+	hbox->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
+	
+	SetSizerAndFit(hbox);
 	Center();
 }
 
@@ -29,6 +44,7 @@ void TimelineWindow::InitTimeline()
 	
 	slider_start_x_pos = TRACK_WIDTH / (TIME_TICK_NUM - 1);
 	
+	m_slider = new wxSlider(this, ID_SLIDER, 0, 0, TRACK_WIDTH, wxPoint(slider_start_x_pos, 30), wxSize(TRACK_WIDTH, -1), wxSL_HORIZONTAL);
 	
 }
 
@@ -59,13 +75,17 @@ std::vector<double> TimelineWindow::LinearSpacedArray(double a, double b, std::s
 
 void TimelineWindow::OnScroll(wxScrollEvent& event)
 {
-	m_slider_value = slider->GetValue();
+	m_slider_value = m_slider->GetValue();
 	Refresh();
+	
+	FitInside();
 }
 
 void TimelineWindow::OnSize(wxSizeEvent& event)
 {
-	Refresh();
+	Refresh(); //for wxDc onPaint stuff
+	
+	FitInside();
 }
 
 void TimelineWindow::OnPaint(wxPaintEvent& event)
@@ -95,8 +115,7 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
             wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
 	dc.SetFont(font);
 	
-	
-	int step = (int) round(TRACK_WIDTH / 10);
+	int step = (int) round( TRACK_WIDTH / (TIME_TICK_NUM-1) );
 
 	dc.SetPen(wxPen(wxColour(90, 80, 60)));
 	
@@ -107,12 +126,3 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	}
 }
 
-TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Timeline Frame")
-{
-	new TimelineWindow(this);
-	
-	// ensure that we have scrollbars initially
-	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT/2);
-	
-	Show();
-}
