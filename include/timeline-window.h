@@ -9,9 +9,9 @@
 
 enum
     {
-        TRACK_WIDTH = 792, //in pixels
+        TRACK_WIDTH = 1000, //in pixels
         TRACK_HEIGHT = 297, //in pixels
-        SLIDER_START_X = 50, //in pixels
+        SLIDER_START_X = 100, //in pixels
         SLIDER_START_VALUE = 0, 
         SLIDER_END_VALUE = 100, //does not yet work for values other than 100, slider offset fails
         VERTICAL_LINE_HEIGHT_TIME = 400 //in pixels

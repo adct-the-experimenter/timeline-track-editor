@@ -5,14 +5,14 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 
 	m_slider_value = 0;
 	m_time_num.resize(9);
-	m_time_num = { 0, 10, 20, 30, 40, 50, 60, 70, 80 }; //time in seconds
+	m_time_num = { 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 }; //time in seconds
 	
-	SetScrollRate( 10, 10 );
-    SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT );
+	SetScrollRate( 10, 10 ); //how many pixels to increment when scrolling
+    SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT ); //actual size of what will be scrolled
     SetBackgroundColour( *wxWHITE );
 
-	int slider_width = TRACK_WIDTH - 50; //width of slider
-	slider = new wxSlider(this, ID_SLIDER, 0, SLIDER_START_VALUE, SLIDER_END_VALUE, wxPoint(SLIDER_START_X, 30), wxSize(slider_width, -1), wxSL_HORIZONTAL);
+	
+	slider = new wxSlider(this, ID_SLIDER, 0, SLIDER_START_VALUE, TRACK_WIDTH, wxPoint(SLIDER_START_X, 30), wxSize(TRACK_WIDTH, -1), wxSL_HORIZONTAL);
 	
 	Connect(ID_SLIDER, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler(TimelineWindow::OnScroll));  
 	Connect(wxEVT_PAINT, wxPaintEventHandler(TimelineWindow::OnPaint));
@@ -45,11 +45,10 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	wxBrush brush1(wxColour(197, 108, 0));
 	dc.SetBrush(brush1);
 	
-	int width = TRACK_WIDTH;
+	
 	
 	//x coordinate of vertical line representing current position in time
-	int offset_slider = 20;
-	wxCoord x = SLIDER_START_X + offset_slider +( (TRACK_WIDTH / SLIDER_END_VALUE) * (m_slider_value));
+	wxCoord x = m_slider_value + SLIDER_START_X;
 	
 	dc.DrawRectangle( wxRect(x, 0, 2, VERTICAL_LINE_HEIGHT_TIME) );
 	
@@ -60,15 +59,15 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
             wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
 	dc.SetFont(font);
 	
-	
-	int step = (int) round(width / 10.0);
+	int width = TRACK_WIDTH;
+	int step = (int) round(width / 10);
 
 	dc.SetPen(wxPen(wxColour(90, 80, 60)));
 	
 	for ( int i=1; i <= (int)m_time_num.size(); i++ ) 
 	{
-		dc.DrawLine(i*step, 0, i*step, 8);
-		dc.DrawText( wxString::Format(wxT("%ds"), m_time_num[i-1]) , i*step, 8);
+		dc.DrawLine(i*step, 1, i*step, 10);
+		dc.DrawText( wxString::Format( wxT("%ds"), m_time_num[i-1] ) , i*step, 10);
 	}
 }
 
