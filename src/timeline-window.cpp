@@ -25,13 +25,18 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	
 	TimelineWindow::InitTimeline();
 	
+	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	
 	//make horizontal box to put names in
-	wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *hboxSlider = new wxBoxSizer(wxHORIZONTAL);
 	
 	//add slider to box
-	hbox->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
+	hboxSlider->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
 	
-	SetSizerAndFit(hbox);
+	vbox->Add(hboxSlider, 0, wxEXPAND | wxALL | wxALIGN_TOP, 0); //add horizontal box containing slider
+	vbox->AddStretchSpacer(1); //add spacer box to keep horizontal box containing slider at the top
+	
+	SetSizerAndFit(vbox);
 	Center();
 }
 
