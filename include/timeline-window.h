@@ -5,7 +5,7 @@
 #include <wx/slider.h>
 
 #include <iostream>
-
+#include <vector>
 
 enum
     {
@@ -13,7 +13,8 @@ enum
         TRACK_HEIGHT = 297, //in pixels
         SLIDER_START_X = 50, //in pixels
         SLIDER_START_VALUE = 0, 
-        SLIDER_END_VALUE = 100 //does not yet work for values other than 100, slider offset fails
+        SLIDER_END_VALUE = 100, //does not yet work for values other than 100, slider offset fails
+        VERTICAL_LINE_HEIGHT_TIME = 400 //in pixels
     };
 
 class TimelineWindow : public wxScrolled<wxWindow>
@@ -28,8 +29,7 @@ public:
     wxSlider *slider;
     int m_slider_value;
 private:
-	int max_timeline_size;
-	
+	std::vector <int> m_time_num; // numbers to display on ruler
 };
 
 

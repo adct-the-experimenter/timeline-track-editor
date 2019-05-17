@@ -2,8 +2,10 @@
 
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
-	
+
 	m_slider_value = 0;
+	m_time_num.resize(9);
+	m_time_num = { 0, 10, 20, 30, 40, 50, 60, 70, 80 }; //time in seconds
 	
 	SetScrollRate( 10, 10 );
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT );
@@ -15,9 +17,8 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	Connect(ID_SLIDER, wxEVT_COMMAND_SLIDER_UPDATED, wxScrollEventHandler(TimelineWindow::OnScroll));  
 	Connect(wxEVT_PAINT, wxPaintEventHandler(TimelineWindow::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(TimelineWindow::OnSize));
-
+	
 	Center();
-
 }
 
 void TimelineWindow::OnScroll(wxScrollEvent& event)
@@ -44,19 +45,16 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	wxBrush brush1(wxColour(197, 108, 0));
 	dc.SetBrush(brush1);
 	
-	wxSize size = GetSize();
 	int width = TRACK_WIDTH;
 	
 	//x coordinate of vertical line representing current position in time
 	int offset_slider = 20;
 	wxCoord x = SLIDER_START_X + offset_slider +( (TRACK_WIDTH / SLIDER_END_VALUE) * (m_slider_value));
 	
-	dc.DrawRectangle( wxRect(x, 0, 2, 200) );
+	dc.DrawRectangle( wxRect(x, 0, 2, VERTICAL_LINE_HEIGHT_TIME) );
 	
 	
 	//initialize variables for timeline ruler
-	int num[] = { 75, 150, 225, 300, 375, 450, 525, 600, 675 };// numbers to display on ruler
-	int asize = sizeof(num)/sizeof(num[1]);
 	
 	wxFont font(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL,
             wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
@@ -67,11 +65,10 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 
 	dc.SetPen(wxPen(wxColour(90, 80, 60)));
 	
-	for ( int i=1; i <= asize; i++ ) 
+	for ( int i=1; i <= (int)m_time_num.size(); i++ ) 
 	{
-		dc.DrawLine(i*step, 0, i*step, 6);
-		wxSize size = dc.GetTextExtent(wxString::Format(wxT("%d"), num[i-1]));
-		dc.DrawText( wxString::Format(wxT("%d"), num[i-1]) , i*step, 8);
+		dc.DrawLine(i*step, 0, i*step, 8);
+		dc.DrawText( wxString::Format(wxT("%ds"), m_time_num[i-1]) , i*step, 8);
 	}
 }
 
