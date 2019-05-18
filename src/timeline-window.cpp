@@ -3,13 +3,15 @@
 
 TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Timeline Frame")
 {
-	new TimelineWindow(this);
+	timelineWindowPtr = new TimelineWindow(this);
 	
 	// ensure that we have scrollbars initially
 	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT/2);
 	
 	Show();
 }
+
+TimelineWindow* TimelineFrame::GetTimelineWindow(){return timelineWindowPtr;}
 
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
@@ -25,7 +27,7 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	
 	TimelineWindow::InitTimeline();
 	
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
+	main_v_box = new wxBoxSizer(wxVERTICAL);
 	
 	//make horizontal box to put names in
 	wxBoxSizer *hboxSlider = new wxBoxSizer(wxHORIZONTAL);
@@ -33,10 +35,9 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	//add slider to box
 	hboxSlider->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
 	
-	vbox->Add(hboxSlider, 0, wxEXPAND | wxALL | wxALIGN_TOP, 0); //add horizontal box containing slider
-	vbox->AddStretchSpacer(1); //add spacer box to keep horizontal box containing slider at the top
+	main_v_box->Add(hboxSlider, 0, wxEXPAND | wxALL | wxALIGN_TOP, 0); //add horizontal box containing slider
 	
-	SetSizerAndFit(vbox);
+	SetSizerAndFit(main_v_box);
 	Center();
 }
 
@@ -81,16 +82,19 @@ std::vector<double> TimelineWindow::LinearSpacedArray(double a, double b, std::s
 void TimelineWindow::OnScroll(wxScrollEvent& event)
 {
 	m_slider_value = m_slider->GetValue();
-	Refresh();
 	
-	FitInside();
+	current_time_pos = m_slider_value * ((double)TIME_END_VALUE / (double)TRACK_WIDTH);
+	
+	Refresh(); //for wxDc onPaint stuff 
+	
+	FitInside(); //for scroll and sizer
 }
 
 void TimelineWindow::OnSize(wxSizeEvent& event)
 {
-	Refresh(); //for wxDc onPaint stuff
+	Refresh(); //for wxDc onPaint stuff 
 	
-	FitInside();
+	FitInside(); //for resize and sizer 
 }
 
 void TimelineWindow::OnPaint(wxPaintEvent& event)
@@ -131,3 +135,27 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	}
 }
 
+void TimelineWindow::SetCurrentTimePosition(double& thisTime)
+{
+	current_time_pos = thisTime;
+	
+	//set slider to current time position
+	int graphical_value = thisTime * (TRACK_WIDTH / TIME_END_VALUE);
+	m_slider->SetValue(graphical_value);
+	m_slider_value = graphical_value;
+}
+
+double TimelineWindow::GetCurrentTimePosition(){return current_time_pos;}
+
+void TimelineWindow::AddTrack(Track* thisTrack)
+{
+	//initialize track
+	thisTrack->InitTrack(this);
+	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
+	
+	//add to timeline window
+	main_v_box->Add(thisTrack->getWindowReference());
+}
+
+wxSlider* TimelineWindow::getSliderReference(){return m_slider;}
+double* TimelineWindow::getPointerToCurrentTimeReference(){return &current_time_pos;}

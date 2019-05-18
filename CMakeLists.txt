@@ -30,6 +30,7 @@ include_directories(/usr/include /usr/local/include ./include ${PROJECT_INCLUDE_
 
 set(SOURCES src/timeline-track-editor.cpp
 			src/timeline-window.cpp
+			src/track.cpp
 			 )
 
 #get_cmake_property(_variableNames VARIABLES)

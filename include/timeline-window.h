@@ -7,6 +7,8 @@
 #include <iostream>
 #include <vector>
 
+#include "track.h"
+
 enum
     {
         TRACK_WIDTH = 1000, //in pixels
@@ -26,7 +28,19 @@ public:
     void OnScroll(wxScrollEvent& event);
 	void OnSize(wxSizeEvent& event);
     
+    void SetCurrentTimePosition(double& thisTime);
+    double GetCurrentTimePosition();
+    
+    //Track related functions
+    
+    void AddTrack(Track* thisTrack);
+    wxSlider* getSliderReference(); //for updating track time
+    double* getPointerToCurrentTimeReference();
+    
 private:
+	
+	//main box that contains all elements and places them vertically
+	wxBoxSizer* main_v_box;  
 	
 	wxSlider *m_slider;
     int m_slider_value;
@@ -39,6 +53,8 @@ private:
 	void InitTimeVector(); //function to initialze m_time_num
 	std::vector<double> LinearSpacedArray(double a, double b, std::size_t N);
 	
+	double current_time_pos; //the current time that the vertical line shows
+	
 };
 
 
@@ -47,6 +63,11 @@ class TimelineFrame : public wxFrame
 {
 public:
     TimelineFrame(wxWindow *parent);
+    
+    TimelineWindow* GetTimelineWindow();
+    
+private:
+	TimelineWindow* timelineWindowPtr;
 };
 
 
