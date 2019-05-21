@@ -9,9 +9,7 @@ void Track::InitTrack(wxWindow* parent)
 {
 	m_window = new wxScrolled<wxWindow>(parent, wxID_ANY);
 	
-	wxCheckBox *m_cb; 
-	m_cb = new wxCheckBox(m_window, ID_CHECKBOX, wxT("Show title"), wxPoint(20, 20));
-	m_cb->SetValue(true);
+	wxStaticText *st1 = new wxStaticText(m_window, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
 }
 
 wxWindow* Track::getWindowReference(){return m_window;}

@@ -1,18 +1,5 @@
 #include "timeline-window.h"
 
-
-TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Timeline Frame")
-{
-	timelineWindowPtr = new TimelineWindow(this);
-	
-	// ensure that we have scrollbars initially
-	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT/2);
-	
-	Show();
-}
-
-TimelineWindow* TimelineFrame::GetTimelineWindow(){return timelineWindowPtr;}
-
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
 	
@@ -35,7 +22,7 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	//add slider to box
 	hboxSlider->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
 	
-	main_v_box->Add(hboxSlider, 0, wxEXPAND | wxALL | wxALIGN_TOP, 0); //add horizontal box containing slider
+	main_v_box->Add(hboxSlider, 0, wxTOP | wxALIGN_TOP, 0); //add horizontal box containing slider
 	
 	SetSizerAndFit(main_v_box);
 	Center();
@@ -153,7 +140,7 @@ void TimelineWindow::AddTrack(Track* thisTrack)
 	thisTrack->InitTrack(this);
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
-	//add to timeline window
+	//add track to timeline window
 	main_v_box->Add(thisTrack->getWindowReference());
 }
 

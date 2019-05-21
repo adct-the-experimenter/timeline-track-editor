@@ -3,6 +3,8 @@
 
 #include <wx/wx.h>
 #include <wx/slider.h>
+#include <wx/panel.h>
+#include <wx/button.h>
 
 #include <iostream>
 #include <vector>
@@ -18,6 +20,8 @@ enum
         TIME_TICK_NUM = 11, //number of ticks to display in ruler, make sure to include zero
         VERTICAL_LINE_HEIGHT_TIME = 400 //in pixels
     };
+
+
 
 class TimelineWindow : public wxScrolled<wxWindow>
 {
@@ -54,23 +58,7 @@ private:
 	std::vector<double> LinearSpacedArray(double a, double b, std::size_t N);
 	
 	double current_time_pos; //the current time that the vertical line shows
-	
 };
-
-
-// Frame that contains Timeline scrolling window
-class TimelineFrame : public wxFrame
-{
-public:
-    TimelineFrame(wxWindow *parent);
-    
-    TimelineWindow* GetTimelineWindow();
-    
-private:
-	TimelineWindow* timelineWindowPtr;
-};
-
-
 
 
 const int ID_SLIDER = 100;

@@ -5,7 +5,8 @@
     #include <wx/wx.h>
 #endif
 
-#include "timeline-window.h"
+#include "timeline-frame.h"
+
 
 //override wxApp to initialize program 
 class MyApp: public wxApp

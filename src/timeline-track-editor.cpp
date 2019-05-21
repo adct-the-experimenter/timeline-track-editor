@@ -53,14 +53,11 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     
     TimelineFrame *timeFrame = new TimelineFrame(this);
     
-	
-	//double start_time = 20.5;
-	//timeFrame->GetTimelineWindow()->SetCurrentTimePosition(start_time);
-	
-	//Track track1;
-	//timeFrame->GetTimelineWindow()->AddTrack(&track1);
+	Track track1;
+	timeFrame->GetTimelineWindow()->AddTrack(&track1);
 	
 	timeFrame->Show(true);
+		
 }
 
 void MyFrame::OnExit(wxCommandEvent& event)
