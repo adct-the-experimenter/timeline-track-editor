@@ -13,6 +13,8 @@ class MyApp: public wxApp
 {
 public:
     virtual bool OnInit(); //initialize program
+    
+    void OnIdle(wxIdleEvent &event);
 };
 
 //override wxFrame to make new custom window

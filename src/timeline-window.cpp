@@ -124,6 +124,8 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 
 void TimelineWindow::SetCurrentTimePosition(double& thisTime)
 {
+	Refresh(); //for updating paint drawing everytime current time position set
+	
 	current_time_pos = thisTime;
 	
 	//set slider to current time position

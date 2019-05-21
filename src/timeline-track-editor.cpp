@@ -23,6 +23,14 @@ bool MyApp::OnInit()
     return true;
 }
 
+void MyApp::OnIdle(wxIdleEvent &event)
+{
+    std::cout << "MyApp is Idle." << std::endl;
+
+    event.RequestMore();
+    
+    
+}
 
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
         : wxFrame(NULL, wxID_ANY, title, pos, size)
@@ -79,3 +87,5 @@ void MyFrame::OnHello(wxCommandEvent& event)
 	//show message
     wxLogMessage("Hello world!");
 }
+
+

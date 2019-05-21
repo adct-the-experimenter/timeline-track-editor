@@ -33,7 +33,7 @@ void PlaybackControls::RunPlaybackState()
 {
 	switch (current_state)
 	{
-		case STATE_NULL:{ break;}
+		case STATE_NULL:{  break;}
 		case STATE_PLAY:
 		{
 			if(timelineWindowPtr != nullptr)
@@ -48,7 +48,7 @@ void PlaybackControls::RunPlaybackState()
 		{
 			if(timelineWindowPtr != nullptr)
 			{	
-				//save current time position
+				//do nothing
 				
 			}
 			
@@ -91,6 +91,10 @@ void PlaybackControls::Pause(wxCommandEvent& event)
 
 void PlaybackControls::Stop(wxCommandEvent& event)
 {
+	//reset time back to start
+	double newTime = 0.0;
+	timelineWindowPtr->SetCurrentTimePosition(newTime);
+	
 	current_state = STATE_NULL;
 }
 
@@ -107,3 +111,18 @@ void PlaybackControls::FastForward(wxCommandEvent& event)
 void PlaybackControls::SetReferenceToTimelineWindow(TimelineWindow* thisTimeline){timelineWindowPtr = thisTimeline;}
 
 int PlaybackControls::GetCurrentState(){return current_state;}
+
+PlaybackTimer::PlaybackTimer(PlaybackControls* controls) : wxTimer()
+{
+    m_controls = controls;
+}
+
+void PlaybackTimer::Notify()
+{
+    m_controls->RunPlaybackState(); 
+}
+
+void PlaybackTimer::start()
+{
+    wxTimer::Start(TIMER_INTERVAL,wxTIMER_CONTINUOUS); //the timer calls Notify every TIMER_INTERVAL milliseconds
+}

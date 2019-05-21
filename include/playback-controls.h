@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 #include <wx/button.h>
+#include <wx/timer.h>
 
 #include <iostream>
 #include <vector>
@@ -51,6 +52,21 @@ private:
 	void FastForward(wxCommandEvent& event);
 };
 
+//class to use with mainframe
+class PlaybackTimer : public wxTimer
+{
+	enum
+	{
+		TIMER_INTERVAL = 100 //when to take action, in milliseconds
+	};
+public:
+    PlaybackTimer(PlaybackControls* controls);
+    void Notify(); //action to take periodically after certain amount of time defined
+    void start();
+
+private:
+	PlaybackControls* m_controls;
+};
 
 
 #endif

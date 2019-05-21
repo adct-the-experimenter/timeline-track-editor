@@ -9,11 +9,19 @@ class TimelineFrame : public wxFrame
 {
 public:
     TimelineFrame(wxWindow *parent);
+    ~TimelineFrame();
     
     TimelineWindow* GetTimelineWindow();
     
+    void OnClose(wxCloseEvent& evt);
+    
 private:
 	TimelineWindow* timelineWindowPtr;
+	PlaybackTimer* timer;
+	PlaybackControls* controls;
+	
+	DECLARE_EVENT_TABLE()
+	
 };
 
 #endif

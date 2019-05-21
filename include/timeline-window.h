@@ -32,6 +32,8 @@ public:
     void OnScroll(wxScrollEvent& event);
 	void OnSize(wxSizeEvent& event);
     
+	//Timeline related functions
+    
     void SetCurrentTimePosition(double& thisTime);
     double GetCurrentTimePosition();
     

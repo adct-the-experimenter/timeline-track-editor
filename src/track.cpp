@@ -9,6 +9,7 @@ void Track::InitTrack(wxWindow* parent)
 {
 	m_window = new wxScrolled<wxWindow>(parent, wxID_ANY);
 	
+	m_window->Show();
 	wxStaticText *st1 = new wxStaticText(m_window, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
 }
 
