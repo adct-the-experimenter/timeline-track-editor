@@ -20,9 +20,12 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	wxBoxSizer *hboxSlider = new wxBoxSizer(wxHORIZONTAL);
 	
 	//add slider to box
-	hboxSlider->Add(m_slider, 0, wxEXPAND | wxALL, slider_start_x_pos);
+	//keep slider at slider start position
+	hboxSlider->Add(m_slider, 0, wxLEFT, slider_start_x_pos); 
 	
-	main_v_box->Add(hboxSlider, 0, wxTOP | wxALIGN_TOP, 0); //add horizontal box containing slider
+	//add horizontal box containing slider
+	//keep horizontal box containing slider 20 pixels from the top to keep ruler visible
+	main_v_box->Add(hboxSlider, 0, wxTOP | wxALIGN_TOP, 20); 
 	
 	SetSizerAndFit(main_v_box);
 	Center();
@@ -143,7 +146,9 @@ void TimelineWindow::AddTrack(Track* thisTrack)
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
 	//add track to timeline window
-	main_v_box->Add(thisTrack->getWindowReference());
+	main_v_box->Add(thisTrack, 0, wxTOP | wxALIGN_TOP, 100);
+	
+	SetSizerAndFit(main_v_box);
 }
 
 wxSlider* TimelineWindow::getSliderReference(){return m_slider;}

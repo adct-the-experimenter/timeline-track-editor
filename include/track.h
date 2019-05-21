@@ -8,10 +8,10 @@
 #include <vector>
 
 
-class Track
+class Track : public wxFrame
 {
 public:
-    Track();
+    Track(const wxString& title);
     
     virtual void InitTrack(wxWindow* parent);
 
@@ -25,7 +25,7 @@ public:
     
 private:
 	
-	wxScrolled <wxWindow> *m_window;
+	wxString m_title; //title of the track
 	
 	wxSlider* time_slider;
     double* current_time_pos_pointer;

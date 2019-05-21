@@ -1,21 +1,20 @@
 #include "track.h"
 
-Track::Track() 
+Track::Track(const wxString& title)  : wxFrame()
 {
-	
+	m_title = title;
 }
+
+
+void Track::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){current_time_pos_pointer = thisTimeVariable;}
 
 void Track::InitTrack(wxWindow* parent)
 {
-	m_window = new wxScrolled<wxWindow>(parent, wxID_ANY);
+	this->Create(parent, wxID_ANY, m_title, wxDefaultPosition, wxSize(270, 150));
 	
-	m_window->Show();
-	wxStaticText *st1 = new wxStaticText(m_window, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
+	wxStaticText *st1 = new wxStaticText(parent, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
+	
 }
-
-wxWindow* Track::getWindowReference(){return m_window;}
-
-void Track::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){current_time_pos_pointer = thisTimeVariable;}
 
 void Track::OnSize(wxSizeEvent& event)
 {

@@ -27,7 +27,7 @@ class TimelineWindow : public wxScrolled<wxWindow>
 {
 public:
     TimelineWindow(wxWindow *parent);
-
+	
     void OnPaint(wxPaintEvent& event);
     void OnScroll(wxScrollEvent& event);
 	void OnSize(wxSizeEvent& event);
