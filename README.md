@@ -25,3 +25,25 @@ wxwidgets https://www.wxwidgets.org/
 7. make
 8. ./timeline-track-editor
 
+
+# How to Use:
+
+This section is a work in progress. It will be updated weekly.
+
+Set parameters for window and tracks in the parameters.h file.
+
+Add a track by initializing it in the main frame of the application and then use timeline window function TimelineWindow::AddTrack.
+
+	MyFrame::MyFrame()
+	{
+		//...
+		
+		TimelineFrame *timeFrame = new TimelineFrame(this);
+    
+		Track track1("Variable Track");
+		timeFrame->GetTimelineWindow()->AddTrack(&track1);
+		
+		timeFrame->Show(true);
+		
+	}
+	

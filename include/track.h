@@ -3,12 +3,14 @@
 
 #include <wx/wx.h>
 #include <wx/slider.h>
+#include <wx/panel.h>
 
 #include <iostream>
 #include <vector>
 
+#include "parameters.h"
 
-class Track : public wxFrame
+class Track : public wxPanel
 {
 public:
     Track(const wxString& title);
@@ -21,16 +23,14 @@ public:
     
     void SetReferenceToCurrentTimeVariable(double* thisTimeVariable);
     
-    wxWindow* getWindowReference();
-    
 private:
+	
+	wxWindow* m_parent;
 	
 	wxString m_title; //title of the track
 	
 	wxSlider* time_slider;
     double* current_time_pos_pointer;
-    
-    const int ID_CHECKBOX = 100;
     
 };
 

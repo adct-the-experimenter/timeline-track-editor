@@ -2,6 +2,7 @@
 
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
 {
+	m_parent = parent;
 	
 	SetScrollRate( 10, 10 ); //how many pixels to increment when scrolling
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT ); //actual size of what will be scrolled
@@ -21,7 +22,7 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	
 	//add slider to box
 	//keep slider at slider start position
-	hboxSlider->Add(m_slider, 0, wxLEFT, slider_start_x_pos); 
+	hboxSlider->Add(m_slider, 0, wxLEFT | wxEXPAND, slider_start_x_pos); 
 	
 	//add horizontal box containing slider
 	//keep horizontal box containing slider 20 pixels from the top to keep ruler visible
@@ -142,7 +143,7 @@ double TimelineWindow::GetCurrentTimePosition(){return current_time_pos;}
 void TimelineWindow::AddTrack(Track* thisTrack)
 {
 	//initialize track
-	thisTrack->InitTrack(this);
+	thisTrack->InitTrack(m_parent);
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
 	//add track to timeline window

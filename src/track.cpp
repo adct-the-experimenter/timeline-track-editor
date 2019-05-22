@@ -1,8 +1,11 @@
 #include "track.h"
 
-Track::Track(const wxString& title)  : wxFrame()
+Track::Track(const wxString& title)  : wxPanel()
 {
 	m_title = title;
+	
+	Connect(wxEVT_PAINT, wxPaintEventHandler(Track::OnPaint));
+	Connect(wxEVT_SIZE, wxSizeEventHandler(Track::OnSize));
 }
 
 
@@ -10,25 +13,27 @@ void Track::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){current_
 
 void Track::InitTrack(wxWindow* parent)
 {
-	this->Create(parent, wxID_ANY, m_title, wxDefaultPosition, wxSize(270, 150));
+	m_parent = parent;
 	
+	this->Create(parent, wxID_ANY, wxDefaultPosition, wxSize(TRACK_HEIGHT, TRACK_WIDTH),wxTAB_TRAVERSAL,m_title);
+	this->SetBackgroundColour( *wxLIGHT_GREY );
+	this->Show();
 	wxStaticText *st1 = new wxStaticText(parent, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
-	
 }
 
 void Track::OnSize(wxSizeEvent& event)
 {
-	//m_window->Refresh();
+	Refresh();
 
-	//m_window->FitInside();
+	FitInside();
 }
 
 void Track::OnScroll(wxScrollEvent& event)
 {
 	std::cout << "Scroll called! \n";
-	//m_window->Refresh(); //for wxDc onPaint stuff 
+	Refresh(); //for wxDc onPaint stuff 
 	
-	//m_window->FitInside(); //for scroll and sizer
+	FitInside(); //for scroll and sizer
 }
 
 

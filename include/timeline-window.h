@@ -11,17 +11,7 @@
 
 #include "track.h"
 
-enum
-    {
-        TRACK_WIDTH = 1000, //in pixels
-        TRACK_HEIGHT = 297, //in pixels
-        TIME_START_VALUE = 0, //start value of ruler
-        TIME_END_VALUE = 100, //end value of ruler
-        TIME_TICK_NUM = 11, //number of ticks to display in ruler, make sure to include zero
-        VERTICAL_LINE_HEIGHT_TIME = 400 //in pixels
-    };
-
-
+#include "parameters.h"
 
 class TimelineWindow : public wxScrolled<wxWindow>
 {
@@ -44,6 +34,8 @@ public:
     double* getPointerToCurrentTimeReference();
     
 private:
+
+	wxWindow* m_parent;
 	
 	//main box that contains all elements and places them vertically
 	wxBoxSizer* main_v_box;  
