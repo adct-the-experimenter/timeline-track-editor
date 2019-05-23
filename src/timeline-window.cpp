@@ -22,7 +22,7 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 	
 	//add slider to box
 	//keep slider at slider start position
-	hboxSlider->Add(m_slider, 0, wxLEFT | wxEXPAND, slider_start_x_pos); 
+	hboxSlider->Add(m_slider, 0, wxLEFT | wxRIGHT | wxEXPAND, slider_start_x_pos); 
 	
 	//add horizontal box containing slider
 	//keep horizontal box containing slider 20 pixels from the top to keep ruler visible
@@ -147,7 +147,7 @@ void TimelineWindow::AddTrack(Track* thisTrack)
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
 	//add track to timeline window
-	main_v_box->Add(thisTrack, 0, wxTOP | wxALIGN_TOP, 100);
+	main_v_box->Add(thisTrack, 0, wxTOP | wxALIGN_TOP | wxEXPAND, 100);
 	
 	SetSizerAndFit(main_v_box);
 }
