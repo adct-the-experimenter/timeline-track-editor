@@ -40,29 +40,5 @@ void Track::OnScroll(wxScrollEvent& event)
 void Track::OnPaint(wxPaintEvent& event)
 {
 	std::cout << "Current Time in Track:" << *current_time_pos_pointer << std::endl;
-	//std::cout << "OnPaint called in Track.\n";
-	wxPaintDC dc(this);
-
-	//DoPrepareDC(dc); //prepare device context for drawing a scrolling image
-	
-	//Initialize variables for drawing vertical timeline line indicating current position
-	wxPen pen(wxColour(212, 212, 212));
-	dc.SetPen(pen);
-	
-	wxBrush brush1(wxColour(197, 108, 0));
-	dc.SetBrush(brush1);
-	
-	//initialize variables for timeline ruler
-	
-	int step = (int) round( TRACK_WIDTH / (TIME_TICK_NUM-1) );
-
-	dc.SetPen(wxPen(wxColour(90, 80, 60)));
-	
-	for ( int i=1; i <= 00; i++ ) 
-	{
-		dc.DrawLine(i*step, 1, i*step, 10);
-		//dc.DrawText( wxString::Format( wxT("%ds"), m_time_num[i-1] ) , i*step, 10);
-	}
-	
 }
 

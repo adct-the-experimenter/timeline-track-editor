@@ -1,7 +1,10 @@
 #include "playback-controls.h"
 
+
 PlaybackControls::PlaybackControls(wxWindow* parent) : wxWindow(parent, wxID_ANY)
 {
+	time_res_seconds = double(TIME_RESOLUTION) / 1000;
+	
 	//make horizontal box to put buttons in
 	wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
 	
@@ -42,7 +45,7 @@ void PlaybackControls::RunPlaybackState()
 				if(timelineWindowPtr->GetCurrentTimePosition() <= TIME_END_VALUE)
 				{
 					//increment current time position until end, then set state to null
-					double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.1;
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() + time_res_seconds;
 					timelineWindowPtr->SetCurrentTimePosition(newTime);
 				}
 				else
@@ -74,7 +77,7 @@ void PlaybackControls::RunPlaybackState()
 				if(timelineWindowPtr->GetCurrentTimePosition() >= TIME_START_VALUE)
 				{
 					//decrement current time position until beginning, then set state to null
-					double newTime = timelineWindowPtr->GetCurrentTimePosition() - 0.1;
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() - time_res_seconds;
 					timelineWindowPtr->SetCurrentTimePosition(newTime);
 				}
 				else
@@ -156,5 +159,6 @@ void PlaybackTimer::Notify()
 
 void PlaybackTimer::start()
 {
-    wxTimer::Start(TIMER_INTERVAL,wxTIMER_CONTINUOUS); //the timer calls Notify every TIMER_INTERVAL milliseconds
+	
+    wxTimer::Start(TIME_RESOLUTION,wxTIMER_CONTINUOUS); //the timer calls Notify every TIMER_INTERVAL milliseconds
 }

@@ -1,8 +1,7 @@
 #include "timeline-frame.h"
 
 TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Timeline Frame")
-{
-	
+{		
 	//make horizontal box to put names in
 	wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
 	

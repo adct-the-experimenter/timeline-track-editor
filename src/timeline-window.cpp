@@ -1,7 +1,7 @@
 #include "timeline-window.h"
 
 TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, wxID_ANY)
-{
+{	
 	m_parent = parent;
 	
 	current_time_pos = 0;

@@ -28,7 +28,8 @@ set ( PROJECT_INCLUDE_DIR ${wxWidgets_INCLUDE_DIRS} )
 #for where to find header files for source and library
 include_directories(/usr/include /usr/local/include ./include ${PROJECT_INCLUDE_DIR})
 
-set(SOURCES src/timeline-track-editor.cpp
+set(SOURCES 
+			src/timeline-track-editor.cpp
 			src/timeline-frame.cpp
 			src/timeline-window.cpp
 			src/playback-controls.cpp

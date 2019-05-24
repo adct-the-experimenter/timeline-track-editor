@@ -50,15 +50,13 @@ private:
 	void Stop(wxCommandEvent& event);
 	void Rewind(wxCommandEvent& event);
 	void FastForward(wxCommandEvent& event);
+	
+	double time_res_seconds; 
 };
 
 //class to use with mainframe
 class PlaybackTimer : public wxTimer
 {
-	enum
-	{
-		TIMER_INTERVAL = 100 //when to take action, in milliseconds
-	};
 public:
     PlaybackTimer(PlaybackControls* controls);
     void Notify(); //action to take periodically after certain amount of time defined
