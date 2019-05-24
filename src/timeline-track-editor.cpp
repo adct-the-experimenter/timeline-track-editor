@@ -58,9 +58,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     
     TimelineFrame *timeFrame = new TimelineFrame(this);
     
-	Track track1("Variable Track");
-	timeFrame->GetTimelineWindow()->AddTrack(&track1);
+	Track* track1 = new Track("Variable Track");
+	timeFrame->GetTimelineWindow()->AddTrack(track1);
 	
+	track1->Show();
 	timeFrame->Show(true);
 		
 }

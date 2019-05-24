@@ -4,6 +4,8 @@ TimelineWindow::TimelineWindow(wxWindow *parent) : wxScrolled<wxWindow>(parent, 
 {
 	m_parent = parent;
 	
+	current_time_pos = 0;
+	
 	SetScrollRate( 10, 10 ); //how many pixels to increment when scrolling
     SetVirtualSize( TRACK_WIDTH, TRACK_HEIGHT ); //actual size of what will be scrolled
     SetBackgroundColour( *wxWHITE );
@@ -95,12 +97,11 @@ void TimelineWindow::OnPaint(wxPaintEvent& event)
 	DoPrepareDC(dc); //prepare device context for drawing a scrolling image
 	
 	//Initialize variables for drawing vertical timeline line indicating current position
-	wxPen pen(wxColour(212, 212, 212));
+	wxPen pen(wxColour(0, 0, 0)); //make pen color very black
 	dc.SetPen(pen);
 	
 	wxBrush brush1(wxColour(197, 108, 0));
 	dc.SetBrush(brush1);
-	
 	
 	
 	//x coordinate of vertical line representing current position in time
@@ -143,11 +144,15 @@ double TimelineWindow::GetCurrentTimePosition(){return current_time_pos;}
 void TimelineWindow::AddTrack(Track* thisTrack)
 {
 	//initialize track
-	thisTrack->InitTrack(m_parent);
+	thisTrack->InitTrack(this);
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
+	wxBoxSizer *hboxTrack = new wxBoxSizer(wxHORIZONTAL);
+	
+	hboxTrack->Add(thisTrack, 0, wxRIGHT | wxLEFT, slider_start_x_pos);
+	
 	//add track to timeline window
-	main_v_box->Add(thisTrack, 0, wxTOP | wxALIGN_TOP | wxEXPAND, 100);
+	main_v_box->Add(hboxTrack, 1, wxTOP | wxALIGN_TOP, 100);
 	
 	SetSizerAndFit(main_v_box);
 }

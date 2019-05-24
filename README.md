@@ -36,14 +36,18 @@ Add a track by initializing it in the main frame of the application and then use
 
 	MyFrame::MyFrame()
 	{
+		//Code for custom menus such as file,edit,help, etc. go here
 		//...
 		
+		//Initialize frame that holds timeline
 		TimelineFrame *timeFrame = new TimelineFrame(this);
-    
-		Track track1("Variable Track");
+		
+		//add a track to frame holding timeline
+		Track* track1 = new Track("Variable Track");
 		timeFrame->GetTimelineWindow()->AddTrack(&track1);
 		
+		//Show timeframe and added track
 		timeFrame->Show(true);
-		
+		track1->Show(true);
 	}
 	

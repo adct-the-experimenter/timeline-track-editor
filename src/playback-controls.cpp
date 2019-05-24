@@ -38,9 +38,22 @@ void PlaybackControls::RunPlaybackState()
 		{
 			if(timelineWindowPtr != nullptr)
 			{
-				//increment current time position until end, then set state to null
-				double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.1;
-				timelineWindowPtr->SetCurrentTimePosition(newTime);
+				//if current time is past the end 
+				if(timelineWindowPtr->GetCurrentTimePosition() <= TIME_END_VALUE)
+				{
+					//increment current time position until end, then set state to null
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.1;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+				}
+				else
+				{
+					//set current time to end and put it in null state
+					double newTime = TIME_END_VALUE;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+					current_state = STATE_NULL;
+				}
+				
+				
 			} 
 			break;
 		}
@@ -58,9 +71,18 @@ void PlaybackControls::RunPlaybackState()
 		{
 			if(timelineWindowPtr != nullptr)
 			{
-				//decrement current time position until beginning, then set state to null
-				double newTime = timelineWindowPtr->GetCurrentTimePosition() - 0.1;
-				timelineWindowPtr->SetCurrentTimePosition(newTime);
+				if(timelineWindowPtr->GetCurrentTimePosition() >= TIME_START_VALUE)
+				{
+					//decrement current time position until beginning, then set state to null
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() - 0.1;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+				}
+				else
+				{
+					double newTime = TIME_START_VALUE;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+					current_state = STATE_NULL;
+				}
 			}
 			break;
 			
@@ -68,12 +90,22 @@ void PlaybackControls::RunPlaybackState()
 		case STATE_FAST_FORWARD:
 		{
 			if(timelineWindowPtr != nullptr)
-			{	
-				//increment current time position until end, then set state to null
-				//faster than play
-				double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.5;
-				timelineWindowPtr->SetCurrentTimePosition(newTime);
-			}
+			{
+				//if current time is past the end 
+				if(timelineWindowPtr->GetCurrentTimePosition() <= TIME_END_VALUE)
+				{
+					//increment current time position until end, then set state to null
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.5;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+				}
+				else
+				{
+					//set current time to end and put it in null state
+					double newTime = TIME_END_VALUE;
+					timelineWindowPtr->SetCurrentTimePosition(newTime);
+					current_state = STATE_NULL;
+				}
+			} 
 			break;
 		}
 	};
