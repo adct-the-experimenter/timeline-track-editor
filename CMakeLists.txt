@@ -33,6 +33,7 @@ set(SOURCES
 			src/timeline-frame.cpp
 			src/timeline-window.cpp
 			src/playback-controls.cpp
+			src/double-track.cpp
 			src/track.cpp
 			 )
 

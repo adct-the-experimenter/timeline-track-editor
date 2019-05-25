@@ -1,21 +1,14 @@
-#ifndef TRACK_H
-#define TRACK_H
+#ifndef DOUBLE_TRACK_H
+#define DOUBLE_TRACK_H
 
-#include <wx/wx.h>
-#include <wx/slider.h>
-#include <wx/panel.h>
-
-#include <iostream>
-#include <vector>
-
-#include "parameters.h"
+#include "track.h"
 
 
-class Track : public wxPanel
+class DoubleTrack : public Track
 {
 
 public:
-    Track(const wxString& title);
+    DoubleTrack(const wxString& title);
     
     virtual void InitTrack(wxWindow* parent);
 
@@ -27,13 +20,11 @@ public:
     
     double GetCurrentTime();
     
+    void SetReferenceToVarToManipulate(double* thisVar);
+    
 private:
-	
-	wxWindow* m_parent;
-	
-	wxString m_title; //title of the track
-	
-    double* current_time_pos_pointer;
+
+	double* varToManipulatePtr;
     
 };
 

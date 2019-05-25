@@ -7,6 +7,7 @@
 
 #include "timeline-frame.h"
 
+#include "double-track.h"
 
 //override wxApp to initialize program 
 class MyApp: public wxApp

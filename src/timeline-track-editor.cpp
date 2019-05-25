@@ -58,7 +58,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     
     TimelineFrame *timeFrame = new TimelineFrame(this);
     int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
-	Track* track1 = new Track("Variable Track");
+	DoubleTrack* track1 = new DoubleTrack("Variable Track");
 	timeFrame->GetTimelineWindow()->AddTrack(track1,space);
 	
 	track1->Show();

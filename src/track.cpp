@@ -18,7 +18,7 @@ void Track::InitTrack(wxWindow* parent)
 	this->Create(parent, wxID_ANY, wxDefaultPosition, wxSize(TRACK_WIDTH, TRACK_HEIGHT),wxTAB_TRAVERSAL,m_title);
 	this->SetBackgroundColour( *wxLIGHT_GREY );
 	this->Show();
-	wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
+	//wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a track."), wxPoint(25, 80) );
 }
 
 void Track::OnSize(wxSizeEvent& event)
@@ -43,3 +43,4 @@ void Track::OnPaint(wxPaintEvent& event)
 	
 }
 
+double Track::GetCurrentTime(){return *current_time_pos_pointer;}
