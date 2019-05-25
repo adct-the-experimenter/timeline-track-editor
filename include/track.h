@@ -10,8 +10,10 @@
 
 #include "parameters.h"
 
+
 class Track : public wxPanel
 {
+
 public:
     Track(const wxString& title);
     
@@ -29,7 +31,6 @@ private:
 	
 	wxString m_title; //title of the track
 	
-	wxSlider* time_slider;
     double* current_time_pos_pointer;
     
 };

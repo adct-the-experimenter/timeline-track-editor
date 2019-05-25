@@ -44,7 +44,9 @@ Add a track by initializing it in the main frame of the application and then use
 		
 		//add a track to frame holding timeline
 		Track* track1 = new Track("Variable Track");
-		timeFrame->GetTimelineWindow()->AddTrack(&track1);
+		
+		int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
+		timeFrame->GetTimelineWindow()->AddTrack(&track1,space);
 		
 		//Show timeframe and added track
 		timeFrame->Show(true);

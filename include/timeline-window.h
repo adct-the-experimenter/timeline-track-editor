@@ -29,7 +29,7 @@ public:
     
     //Track related functions
     
-    void AddTrack(Track* thisTrack);
+    void AddTrack(Track* thisTrack, int& space);
     wxSlider* getSliderReference(); //for updating track time
     double* getPointerToCurrentTimeReference();
     

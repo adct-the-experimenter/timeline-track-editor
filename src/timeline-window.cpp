@@ -141,7 +141,7 @@ void TimelineWindow::SetCurrentTimePosition(double& thisTime)
 
 double TimelineWindow::GetCurrentTimePosition(){return current_time_pos;}
 
-void TimelineWindow::AddTrack(Track* thisTrack)
+void TimelineWindow::AddTrack(Track* thisTrack, int& space)
 {
 	//initialize track
 	thisTrack->InitTrack(this);
@@ -152,7 +152,7 @@ void TimelineWindow::AddTrack(Track* thisTrack)
 	hboxTrack->Add(thisTrack, 0, wxRIGHT | wxLEFT, slider_start_x_pos);
 	
 	//add track to timeline window
-	main_v_box->Add(hboxTrack, 1, wxTOP | wxALIGN_TOP, 100);
+	main_v_box->Add(hboxTrack, 1, wxTOP | wxALIGN_TOP,space);
 	
 	SetSizerAndFit(main_v_box);
 }
