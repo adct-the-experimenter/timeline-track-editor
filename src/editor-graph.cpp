@@ -33,7 +33,13 @@ void EditorGraph::DrawHorizontalAxis(wxDC& dc)
 	for ( int i=1; i <= (int)timeTickVectorPtr->size(); i++ ) 
 	{
 		dc.DrawLine(i*step - offset, 1, i*step - offset , 10);
-		dc.DrawText( wxString::Format( wxT("%ds"), (int)timeTickVectorPtr->at(i-1) ) , i*step - offset, 10);
+		
+		//skip drawing the zero tick maker because it is mixes with text of vertical axis
+		if(i != 1)
+		{
+			dc.DrawText( wxString::Format( wxT("%ds"), (int)timeTickVectorPtr->at(i-1) ) , i*step - offset, 10);
+		}
+		
 	}
 }
 
