@@ -28,9 +28,10 @@ wxwidgets https://www.wxwidgets.org/
 
 # How to Use:
 
-This section is a work in progress. It will be updated weekly.
+This section is a work in progress. It will be updated as needed.
 
-Set parameters for window and tracks in the parameters.h file.
+Set parameters for window and tracks in the parameters.h file. 
+Make sure to use make to update executable after editing parameters.
 
 Add a track by initializing it in the main frame of the application and then use timeline window function TimelineWindow::AddTrack.
 
