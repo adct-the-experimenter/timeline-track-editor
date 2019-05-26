@@ -33,6 +33,8 @@ public:
     wxSlider* getSliderReference(); //for updating track time
     double* getPointerToCurrentTimeReference();
     
+    std::vector <int> *GetTimeTickVector(); //use to draw time ticks in tracks
+    
 private:
 
 	wxWindow* m_parent;

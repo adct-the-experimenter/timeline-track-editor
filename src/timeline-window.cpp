@@ -71,6 +71,7 @@ std::vector<double> TimelineWindow::LinearSpacedArray(double a, double b, std::s
 	return xs;
 }
 
+std::vector <int> * TimelineWindow::GetTimeTickVector(){return &m_time_num;}
 
 void TimelineWindow::OnScroll(wxScrollEvent& event)
 {
@@ -144,7 +145,7 @@ double TimelineWindow::GetCurrentTimePosition(){return current_time_pos;}
 void TimelineWindow::AddTrack(Track* thisTrack, int& space)
 {
 	//initialize track
-	thisTrack->InitTrack(this);
+	thisTrack->InitTrack(this,&m_time_num);
 	thisTrack->SetReferenceToCurrentTimeVariable(&current_time_pos);
 	
 	wxBoxSizer *hboxTrack = new wxBoxSizer(wxHORIZONTAL);

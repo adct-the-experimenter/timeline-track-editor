@@ -10,11 +10,15 @@ Track::Track(const wxString& title)  : wxPanel()
 
 
 void Track::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){current_time_pos_pointer = thisTimeVariable;}
+void Track::SetReferenceToTimeTickVector(std::vector <int> *thisVector){ptrToTimeTickVector = thisVector;}
 
-void Track::InitTrack(wxWindow* parent)
+std::vector <int> *Track::GetReferenceToTimeTickVector(){return ptrToTimeTickVector;}
+
+void Track::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
 	m_parent = parent;
 	
+	ptrToTimeTickVector = timeTickVector;
 	this->Create(parent, wxID_ANY, wxDefaultPosition, wxSize(TRACK_WIDTH, TRACK_HEIGHT),wxTAB_TRAVERSAL,m_title);
 	this->SetBackgroundColour( *wxLIGHT_GREY );
 	this->Show();

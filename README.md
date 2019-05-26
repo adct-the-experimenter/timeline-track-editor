@@ -40,17 +40,22 @@ Add a track by initializing it in the main frame of the application and then use
 		//Code for custom menus such as file,edit,help, etc. go here
 		//...
 		
-		//Initialize frame that holds timeline
+		//Code to initialize timeline track editor part of GUI
+		
 		TimelineFrame *timeFrame = new TimelineFrame(this);
-		
-		//add a track to frame holding timeline
-		Track* track1 = new Track("Variable Track");
-		
+    
 		int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
-		timeFrame->GetTimelineWindow()->AddTrack(&track1,space);
+		DoubleTrack* track1 = new DoubleTrack("Variable Track");
 		
-		//Show timeframe and added track
+		double start = -10.0f; //lowest value
+		double end = 10.0f; //highest value
+		int numTicks = 11; //number of ticks between lowest value and highest value including zero
+		
+		track1->SetBoundsForVariable(start,end,numTicks); //setup bounds for vertical axis
+		
+		timeFrame->GetTimelineWindow()->AddTrack(track1,space);
+		
+		track1->Show();
 		timeFrame->Show(true);
-		track1->Show(true);
 	}
 	

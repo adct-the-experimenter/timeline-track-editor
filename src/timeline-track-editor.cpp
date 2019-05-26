@@ -57,8 +57,16 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     
     
     TimelineFrame *timeFrame = new TimelineFrame(this);
+    
     int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
 	DoubleTrack* track1 = new DoubleTrack("Variable Track");
+	
+	double start = -10.0f; //lowest value
+	double end = 10.0f; //highest value
+	int numTicks = 11; //number of ticks between lowest value and highest value including zero
+	
+	track1->SetBoundsForVariable(start,end,numTicks); //setup bounds for vertical axis
+	
 	timeFrame->GetTimelineWindow()->AddTrack(track1,space);
 	
 	track1->Show();

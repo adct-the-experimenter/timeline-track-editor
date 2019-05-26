@@ -17,13 +17,16 @@ class Track : public wxPanel
 public:
     Track(const wxString& title);
     
-    virtual void InitTrack(wxWindow* parent);
+    virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
 
     virtual void OnPaint(wxPaintEvent& event);
     virtual void OnScroll(wxScrollEvent& event);
 	virtual void OnSize(wxSizeEvent& event);
     
     void SetReferenceToCurrentTimeVariable(double* thisTimeVariable);
+    void SetReferenceToTimeTickVector(std::vector <int> *thisVector);
+    
+    std::vector <int> *GetReferenceToTimeTickVector();
     
     double GetCurrentTime();
     
@@ -34,6 +37,7 @@ private:
 	wxString m_title; //title of the track
 	
     double* current_time_pos_pointer;
+    std::vector <int> *ptrToTimeTickVector;
     
 };
 
