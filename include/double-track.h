@@ -2,7 +2,7 @@
 #define DOUBLE_TRACK_H
 
 #include "track.h"
-
+#include "editor-graph.h"
 
 class DoubleTrack : public Track
 {
@@ -25,6 +25,7 @@ public:
 private:
 
 	double* varToManipulatePtr;
+    EditorGraph* graphEditor;
     
 };
 

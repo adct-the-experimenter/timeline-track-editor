@@ -14,6 +14,8 @@ void DoubleTrack::InitTrack(wxWindow* parent)
 {
 	Track::InitTrack(parent);
 	
+	graphEditor = new EditorGraph(this);
+	
 	wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a double track."), wxPoint(25, 80) );
 }
 
@@ -36,7 +38,11 @@ void DoubleTrack::OnScroll(wxScrollEvent& event)
 void DoubleTrack::OnPaint(wxPaintEvent& event)
 {
 	//std::cout << "Current Time in Track:" << *current_time_pos_pointer << std::endl;
+	wxPaintDC dc(this);
+
+	PrepareDC(dc); //prepare device context for drawing a scrolling image
 	
+	graphEditor->render(dc);
 }
 
 double DoubleTrack::GetCurrentTime(){return Track::GetCurrentTime();}

@@ -34,6 +34,7 @@ set(SOURCES
 			src/timeline-window.cpp
 			src/playback-controls.cpp
 			src/double-track.cpp
+			src/editor-graph.cpp
 			src/track.cpp
 			 )
 

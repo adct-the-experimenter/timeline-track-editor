@@ -51,7 +51,9 @@ private:
 	void Rewind(wxCommandEvent& event);
 	void FastForward(wxCommandEvent& event);
 	
-	double time_res_seconds; 
+	double time_res_seconds;
+	double time_rewind_seconds;
+	double time_fast_forward_seconds; 
 };
 
 //class to use with mainframe

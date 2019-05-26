@@ -4,6 +4,8 @@
 PlaybackControls::PlaybackControls(wxWindow* parent) : wxWindow(parent, wxID_ANY)
 {
 	time_res_seconds = double(TIME_RESOLUTION) / 1000;
+	time_rewind_seconds = time_res_seconds * double(REWIND_SPEED);
+	time_fast_forward_seconds = time_res_seconds * double(FAST_FORWARD_SPEED);
 	
 	//make horizontal box to put buttons in
 	wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
@@ -77,7 +79,7 @@ void PlaybackControls::RunPlaybackState()
 				if(timelineWindowPtr->GetCurrentTimePosition() >= TIME_START_VALUE)
 				{
 					//decrement current time position until beginning, then set state to null
-					double newTime = timelineWindowPtr->GetCurrentTimePosition() - time_res_seconds;
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() - time_rewind_seconds;
 					timelineWindowPtr->SetCurrentTimePosition(newTime);
 				}
 				else
@@ -98,7 +100,7 @@ void PlaybackControls::RunPlaybackState()
 				if(timelineWindowPtr->GetCurrentTimePosition() <= TIME_END_VALUE)
 				{
 					//increment current time position until end, then set state to null
-					double newTime = timelineWindowPtr->GetCurrentTimePosition() + 0.5;
+					double newTime = timelineWindowPtr->GetCurrentTimePosition() + time_fast_forward_seconds;
 					timelineWindowPtr->SetCurrentTimePosition(newTime);
 				}
 				else
