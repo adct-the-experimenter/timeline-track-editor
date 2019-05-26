@@ -1,34 +1,5 @@
 #include "editor-graph.h"
 
-BEGIN_EVENT_TABLE(EditorGraph, wxPanel)
-// some useful events
-/*
- EVT_MOTION(BasicDrawPane::mouseMoved)
- EVT_LEFT_DOWN(BasicDrawPane::mouseDown)
- EVT_LEFT_UP(BasicDrawPane::mouseReleased)
- EVT_RIGHT_DOWN(BasicDrawPane::rightClick)
- EVT_LEAVE_WINDOW(BasicDrawPane::mouseLeftWindow)
- EVT_KEY_DOWN(BasicDrawPane::keyPressed)
- EVT_KEY_UP(BasicDrawPane::keyReleased)
- EVT_MOUSEWHEEL(BasicDrawPane::mouseWheelMoved)
- */
-
-
-
-END_EVENT_TABLE()
-
-
-// some useful events
-/*
- void BasicDrawPane::mouseMoved(wxMouseEvent& event) {}
- void BasicDrawPane::mouseDown(wxMouseEvent& event) {}
- void BasicDrawPane::mouseWheelMoved(wxMouseEvent& event) {}
- void BasicDrawPane::mouseReleased(wxMouseEvent& event) {}
- void BasicDrawPane::rightClick(wxMouseEvent& event) {}
- void BasicDrawPane::mouseLeftWindow(wxMouseEvent& event) {}
- void BasicDrawPane::keyPressed(wxKeyEvent& event) {}
- void BasicDrawPane::keyReleased(wxKeyEvent& event) {}
- */
  
 EditorGraph::EditorGraph(wxWindow* parent) :
 wxPanel(parent)
@@ -39,17 +10,52 @@ wxPanel(parent)
 
 void EditorGraph::render(wxDC&  dc)
 {
-	//std::cout << "Render called in editor graph. \n";
-    // draw some text
-    //dc.DrawText(wxT("Testing"), 40, 60); 
+	DrawAxes(dc);
+	DrawCurrentPointsOnGraph(dc);
+}
+
+void EditorGraph::mouseDownLeftClick()
+{
+	std::cout << "mouse down left click called! \n";
+	EditorGraph::PlacePointByMouse();
+}
+
+void EditorGraph::PlacePointByMouse()
+{
+	//get graphical coordinates of where mouse left clicked relative to track panel
+	int mouseX = wxGetMousePosition().x - this->GetScreenPosition().x; 
+	int mouseY = wxGetMousePosition().y - this->GetScreenPosition().y;
+	
+	//convert mouse x to time value
+	double thisTime = mouseX * ((double)TIME_END_VALUE / (double)TRACK_WIDTH);
+	
+	//check if there is already a point at that time value
+	if ( map_time.find(thisTime) == map_time.end() ) 
+	{
+	  //if not found 
+	  //put into vector of graph points
+	  graph_points.push_back( wxPoint(mouseX,mouseY) );
+	  //put into time map
+	  std::vector<wxPoint>::iterator it = graph_points.end();
+	  map_time.emplace(thisTime, it);
+	} 
+		
+	
+}
+
+void EditorGraph::DrawCurrentPointsOnGraph(wxDC& dc)
+{
+	// draw a circle
+    dc.SetBrush(*wxBLACK_BRUSH);
+    for(size_t i=0; i < graph_points.size(); i++)
+    {
+		dc.DrawCircle( graph_points.at(i), 2 );
+	}
     
-    // draw a circle
-    //dc.SetBrush(*wxGREEN_BRUSH); // green filling
-    //dc.SetPen( wxPen( wxColor(255,0,0), 5 ) ); // 5-pixels-thick red outline
-    //dc.DrawCircle( wxPoint(200,100), 25 /* radius */ );
     
-    // draw a line
-    //dc.SetPen( wxPen( wxColor(0,0,0), 3 ) ); // black line, 3 pixels thick
-    //dc.DrawLine( 300, 100, 700, 300 ); // draw line across the rectangle
-    
+}
+
+void EditorGraph::DrawAxes(wxDC& dc)
+{
+	
 }

@@ -5,6 +5,7 @@ DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 	
 	Connect(wxEVT_PAINT, wxPaintEventHandler(DoubleTrack::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
+	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DoubleTrack::OnLeftMouseClick));
 }
 
 
@@ -43,6 +44,14 @@ void DoubleTrack::OnPaint(wxPaintEvent& event)
 	PrepareDC(dc); //prepare device context for drawing a scrolling image
 	
 	graphEditor->render(dc);
+	
+	Refresh();
+}
+
+void DoubleTrack::OnLeftMouseClick(wxMouseEvent& event)
+{
+	graphEditor->mouseDownLeftClick();
+	event.Skip();
 }
 
 double DoubleTrack::GetCurrentTime(){return Track::GetCurrentTime();}

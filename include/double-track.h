@@ -15,6 +15,8 @@ public:
     virtual void OnPaint(wxPaintEvent& event);
     virtual void OnScroll(wxScrollEvent& event);
 	virtual void OnSize(wxSizeEvent& event);
+	
+    virtual void OnLeftMouseClick(wxMouseEvent& event);
     
     void SetReferenceToCurrentTimeVariable(double* thisTimeVariable);
     

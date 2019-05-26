@@ -1,6 +1,12 @@
 #include "wx/wx.h"
 #include "wx/sizer.h"
 
+#include "parameters.h"
+
+#include <vector>
+#include <unordered_map>
+
+#include <wx/dcbuffer.h>
 
 class EditorGraph : public wxPanel
 {
@@ -8,23 +14,25 @@ class EditorGraph : public wxPanel
 public:
     EditorGraph(wxWindow* parent);
     
+    void mouseDownLeftClick();
     
     void render(wxDC& dc);
     
-    // some useful events
-    /*
-     void mouseMoved(wxMouseEvent& event);
-     void mouseDown(wxMouseEvent& event);
-     void mouseWheelMoved(wxMouseEvent& event);
-     void mouseReleased(wxMouseEvent& event);
-     void rightClick(wxMouseEvent& event);
-     void mouseLeftWindow(wxMouseEvent& event);
-     void keyPressed(wxKeyEvent& event);
-     void keyReleased(wxKeyEvent& event);
-     */
-    
-    DECLARE_EVENT_TABLE()
+   
 
 private:
+	
+	std::vector <wxPoint> graph_points; //holds points drawn on graph
+	
+	std::unordered_map <double, std::vector<wxPoint>::iterator> map_time; //dictionary to keep track of which time values are occupied
+	
+	//function to place point on mouse event
+	void PlacePointByMouse();
+	
+	//function to draw graph_points on graph
+	void DrawCurrentPointsOnGraph(wxDC& dc);
+	
+	//function to draw axes with tick marks on graph
+	void DrawAxes(wxDC& dc);
 
 };
