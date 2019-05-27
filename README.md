@@ -33,6 +33,8 @@ This section is a work in progress. It will be updated as needed.
 Set parameters for window and tracks in the parameters.h file. 
 Make sure to use make to update executable after editing parameters.
 
+IMPORTANT NOTE: TIME_RESOLUTION must be 500 ms or larger for best results.
+
 Add a track by initializing it in the main frame of the application and then use timeline window function TimelineWindow::AddTrack.
 
 	MyFrame::MyFrame()
@@ -41,21 +43,33 @@ Add a track by initializing it in the main frame of the application and then use
 		//...
 		
 		//Code to initialize timeline track editor part of GUI
-		
-		TimelineFrame *timeFrame = new TimelineFrame(this);
-    
+
+		TimelineFrame *timeFrame = new TimelineFrame(this); 
+
 		int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
 		DoubleTrack* track1 = new DoubleTrack("Variable Track");
-		
+
 		double start = -10.0f; //lowest value
 		double end = 10.0f; //highest value
 		int numTicks = 11; //number of ticks between lowest value and highest value including zero
-		
-		track1->SetBoundsForVariable(start,end,numTicks); //setup bounds for vertical axis
-		
-		timeFrame->GetTimelineWindow()->AddTrack(track1,space);
-		
-		track1->Show();
-		timeFrame->Show(true);
+		double resolution = 1; //the fineness of how much variable can be incremented/decremented by
+
+		track1->SetupAxisForVariable(start,end,resolution,numTicks); //setup bounds for vertical axis
+
+		//Put in the variable to change with the timeline.
+		// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
+		//and not go out of scope or else a segmentation fault happens
+		track1->SetReferenceToVarToManipulate(&someVarToChange); 
+
+		//add track to time frame
+		timeFrame->AddTrack(track1,space);
+
+		track1->Show(); //show the track
+		timeFrame->Show(true); //show the timeframe
 	}
 	
+For further customization use DoubleTrack class as a template to create a new class to handle specific class types.
+
+# To place points on graph 
+Left click on graph in track to place a point in track. 
+Right Click on point in graph in track to remove a point from the graph.

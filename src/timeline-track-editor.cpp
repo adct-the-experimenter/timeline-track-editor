@@ -55,8 +55,9 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     CreateStatusBar();
     SetStatusText( "Welcome to the app!" );
     
+    //Code to initialize timeline track editor part of GUI
     
-    TimelineFrame *timeFrame = new TimelineFrame(this);
+    TimelineFrame *timeFrame = new TimelineFrame(this); 
     
     int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
 	DoubleTrack* track1 = new DoubleTrack("Variable Track");
@@ -64,16 +65,20 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	double start = -10.0f; //lowest value
 	double end = 10.0f; //highest value
 	int numTicks = 11; //number of ticks between lowest value and highest value including zero
-	double resolution = 1;
+	double resolution = 1; //the fineness of how much variable can be incremented/decremented by
 	
 	track1->SetupAxisForVariable(start,end,resolution,numTicks); //setup bounds for vertical axis
 	
-	track1->SetReferenceToVarToManipulate(&someVarToChange);
+	//Put in the variable to change with the timeline.
+	// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
+	//and not go out of scope or else a segmentation fault happens
+	track1->SetReferenceToVarToManipulate(&someVarToChange); 
 	
+	//add track to time frame
 	timeFrame->AddTrack(track1,space);
 	
-	track1->Show();
-	timeFrame->Show(true);
+	track1->Show(); //show the track
+	timeFrame->Show(true); //show the timeframe
 		
 }
 
