@@ -13,6 +13,8 @@ public:
     
     TimelineWindow* GetTimelineWindow();
     
+    void AddTrack(Track* thisTrack, int& space);
+    
     void OnClose(wxCloseEvent& evt);
     
 private:

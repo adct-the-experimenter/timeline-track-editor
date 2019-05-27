@@ -8,6 +8,8 @@
 #include <iostream>
 #include <vector>
 
+#include <functional>   // std::function, std::negate
+
 #include "timeline-window.h"
 
 class PlaybackControls : public wxWindow
@@ -64,8 +66,13 @@ public:
     void Notify(); //action to take periodically after certain amount of time defined
     void start();
 
+	void AddFunctionToTimerLoop( std::function < void() > thisFunction);
+	
 private:
 	PlaybackControls* m_controls;
+	//vector of functions to call everytim Notify is called
+	std::vector < std::function < void() > > functionsNotify;
+	
 };
 
 

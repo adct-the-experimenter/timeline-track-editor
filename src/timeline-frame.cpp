@@ -24,7 +24,7 @@ TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Time
 	vbox->Add(hboxTimeline);
 	
 	// ensure that we have scrollbars initially
-	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT);
+	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT*2);
 	
 	//Not using SetSizer and Fit because that messes up the scrolling
 	SetSizer(vbox);
@@ -41,6 +41,14 @@ TimelineFrame::~TimelineFrame()
 }
 
 TimelineWindow* TimelineFrame::GetTimelineWindow(){return timelineWindowPtr;}
+
+void TimelineFrame::AddTrack(Track* thisTrack, int& space)
+{
+	GetTimelineWindow()->AddTrack(thisTrack,space);
+	
+	std::function< void() > func = std::bind(&Track::FunctionToCallEveryTimeInTimerLoop, thisTrack);
+	timer->AddFunctionToTimerLoop(func );
+}
 
 void TimelineFrame::OnClose(wxCloseEvent& evt)
 {

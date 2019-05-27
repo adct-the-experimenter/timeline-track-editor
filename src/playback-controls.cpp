@@ -157,10 +157,16 @@ PlaybackTimer::PlaybackTimer(PlaybackControls* controls) : wxTimer()
 void PlaybackTimer::Notify()
 {
     m_controls->RunPlaybackState(); 
+    
+    for (auto& x: functionsNotify) {x();}
 }
 
 void PlaybackTimer::start()
 {
-	
     wxTimer::Start(TIME_RESOLUTION,wxTIMER_CONTINUOUS); //the timer calls Notify every TIMER_INTERVAL milliseconds
+}
+
+void PlaybackTimer::AddFunctionToTimerLoop( std::function < void() > thisFunction)
+{
+	functionsNotify.push_back(thisFunction);
 }

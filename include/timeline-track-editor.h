@@ -29,6 +29,8 @@ private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     wxDECLARE_EVENT_TABLE();
+    
+    double someVarToChange;
 };
 
 //unique identifier to use to react to menu command

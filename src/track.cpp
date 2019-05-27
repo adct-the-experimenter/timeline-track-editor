@@ -48,3 +48,4 @@ void Track::OnPaint(wxPaintEvent& event)
 }
 
 double Track::GetCurrentTime(){return *current_time_pos_pointer;}
+

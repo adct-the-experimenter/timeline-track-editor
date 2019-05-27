@@ -9,6 +9,28 @@ wxPanel(parent)
 
 void EditorGraph::SetReferenceToTimeTickVector(std::vector <int> *thisVector){timeTickVectorPtr = thisVector;}
 
+int EditorGraph::GetVerticalGraphValueAtThisTime(double& thisTime, bool& legitValue)
+{
+	//check if there is already a point at that time value
+	if ( map_time.find(thisTime) == map_time.end() ) 
+	{
+		//if not found, do nothing
+		legitValue = false;
+		return 0;
+	}
+	else
+	{
+		//if found
+		
+		//get iterator to vector from time map
+		std::unordered_map<double,std::vector<wxPoint>::iterator>::const_iterator got = map_time.find (thisTime);
+		std::vector<wxPoint>::iterator it = got->second;
+		
+		legitValue = true; 
+		return (int)(*it).y;
+	}
+}
+
 template <typename T>
 void EditorGraph::render(wxDC&  dc,std::vector <T> *verticalAxisVector)
 {
@@ -64,12 +86,24 @@ void EditorGraph::DrawVerticalAxis(wxDC& dc,std::vector <T> *verticalAxisVector)
 
 template void EditorGraph::DrawVerticalAxis<double>( wxDC& , std::vector<double>*);
 
-void EditorGraph::mouseDownLeftClick()
+template <typename T>
+void EditorGraph::mouseDownLeftClick(T& vertStart, T& vertEnd, T& vertRes,
+							double& time, int& relMouseY, bool& legitValues)
 {
-	EditorGraph::PlacePointByMouse();
+	EditorGraph::PlacePointByMouse(vertStart,vertEnd,vertRes,time,relMouseY,legitValues);
 }
 
-void EditorGraph::PlacePointByMouse()
+template void EditorGraph::mouseDownLeftClick<double>( double& vertStart, double& vertEnd, double& vertRes,
+														double& time, int& relMouseY, bool& legitValues);
+
+void EditorGraph::mouseDownRightClick(double& time,bool& legitValue)
+{
+	EditorGraph::RemovePointByMouse(time,legitValue);
+}
+
+template <typename T>
+void EditorGraph::PlacePointByMouse(T& vertStart, T& vertEnd, T& vertRes, 
+									double& time, int& relMouseY, bool& legitValues)
 {
 	//get graphical coordinates of where mouse left clicked relative to track panel
 	int mouseX = wxGetMousePosition().x - this->GetScreenPosition().x; 
@@ -78,18 +112,69 @@ void EditorGraph::PlacePointByMouse()
 	//convert mouse x to time value
 	double thisTime = mouseX * ((double)TIME_END_VALUE / (double)TRACK_WIDTH);
 	
+	//make time value a multiple of timer resolution
+	thisTime = round (thisTime / (double(TIME_RESOLUTION) / 1000)) * (double(TIME_RESOLUTION) / 1000);
+	
+	
+	legitValues = false;
 	//check if there is already a point at that time value
 	if ( map_time.find(thisTime) == map_time.end() ) 
 	{
-	  //if not found 
-	  //put into vector of graph points
-	  graph_points.push_back( wxPoint(mouseX,mouseY) );
-	  //put into time map
-	  std::vector<wxPoint>::iterator it = graph_points.end();
-	  map_time.emplace(thisTime, it);
-	} 
+		//make mouseY a multiple of vertical resolution in pixels
+		//convert to value, divide by resolution, round result, multiply by resolution, convert back to pixel value
+		mouseY = round(mouseY * ( (vertEnd - vertStart) / double(TRACK_HEIGHT) ) * ( 1 / vertRes) ) * vertRes * ( double(TRACK_HEIGHT) / (vertEnd - vertStart) );
+
+		//std::cout << "mouseY is " << mouseY << "at time " << thisTime << " in place point by mouse.";
+		//if not found
+		 
+		//put into vector of graph points
+		graph_points.push_back( wxPoint(mouseX,mouseY) );
+		//put into time map
+		std::vector<wxPoint>::iterator it = graph_points.end();
+		map_time.emplace(thisTime, it);
 		
+		//save time and mouse y to input variables
+		time = thisTime;
+		relMouseY = mouseY;
+		legitValues = true;
+	} 
 	
+}
+
+template void EditorGraph::PlacePointByMouse<double>(double& vertStart, double& vertEnd, double& vertRes,
+													 double& time, int& relMouseY, bool& legitValues);
+
+void EditorGraph::RemovePointByMouse(double& time,bool& legitValue)
+{
+	//get graphical coordinates of where mouse left clicked relative to track panel
+	int mouseX = wxGetMousePosition().x - this->GetScreenPosition().x; 
+	
+	//convert mouse x to time value
+	double thisTime = mouseX * ((double)TIME_END_VALUE / (double)TRACK_WIDTH);
+	
+	//check if there is already a point at that time value
+	if ( map_time.find(thisTime) == map_time.end() ) 
+	{
+		//if not found, do nothing
+		legitValue = false;
+	}
+	else
+	{
+		//if found, remove the point 
+		
+		//save time point info
+		legitValue = true;
+		time = thisTime;
+		
+		//get iterator to vector from time map
+		std::unordered_map<double,std::vector<wxPoint>::iterator>::const_iterator got = map_time.find (thisTime);
+		std::vector<wxPoint>::iterator it = got->second;
+		
+		//remove point from vector of graph points
+		graph_points.erase(it);
+		//remove from time map
+		map_time.erase(thisTime);
+	}
 }
 
 void EditorGraph::DrawCurrentPointsOnGraph(wxDC& dc)
@@ -100,6 +185,4 @@ void EditorGraph::DrawCurrentPointsOnGraph(wxDC& dc)
     {
 		dc.DrawCircle( graph_points.at(i), 2 );
 	}
-    
-    
 }

@@ -30,6 +30,9 @@ public:
     
     double GetCurrentTime();
     
+    //function to call in timer loop, variable to manipulate gets changed here
+    virtual void FunctionToCallEveryTimeInTimerLoop() = 0;
+    
 private:
 	
 	wxWindow* m_parent;

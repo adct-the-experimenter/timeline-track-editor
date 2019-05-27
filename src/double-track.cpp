@@ -6,12 +6,39 @@ DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 	Connect(wxEVT_PAINT, wxPaintEventHandler(DoubleTrack::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
 	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DoubleTrack::OnLeftMouseClick));
+	Connect(wxEVT_CONTEXT_MENU, wxCommandEventHandler(DoubleTrack::OnRightMouseClick));
 }
 
+void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
+{
+	if(varToManipulatePtr != nullptr)
+	{
+		if(graphEditor != nullptr)
+		{
+			double thisTime = DoubleTrack::GetCurrentTime();
+			
+			//check if there is  a point at that time value
+			if ( map_time_output.find(thisTime) == map_time_output.end() ) 
+			{
+				//if not found, do nothing
+			}
+			else
+			{
+				//if found
+
+				//get iterator to vector from time map
+				std::unordered_map<double,double>::const_iterator got = map_time_output.find (thisTime);
+				
+				//std::cout << "value " << got->second << " found at time " << got->first << std::endl;
+				*varToManipulatePtr = got->second;
+			}
+		}
+	}
+}
 
 void DoubleTrack::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){Track::SetReferenceToCurrentTimeVariable(thisTimeVariable);}
 
-std::vector <int> * DoubleTrack::GetReferenceToTimeTickVector(){Track::GetReferenceToTimeTickVector();}
+std::vector <int> * DoubleTrack::GetReferenceToTimeTickVector(){return Track::GetReferenceToTimeTickVector();}
 
 void DoubleTrack::SetReferenceToTimeTickVector(std::vector <int> *thisVector){Track::SetReferenceToTimeTickVector(thisVector);}
 
@@ -26,14 +53,15 @@ void DoubleTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 	graphEditor = new EditorGraph(this);
 	graphEditor->SetReferenceToTimeTickVector(timeTickVector);
 	
-	wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a double track."), wxPoint(25, 80) );
+	//wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a double track."), wxPoint(25, 80) );
 }
 
-void DoubleTrack::SetBoundsForVariable(double& start, double& end, int& numTick)
+void DoubleTrack::SetupAxisForVariable(double& start, double& end,double& resolution, int& numTick)
 {
 	verticalStart = start;
 	verticalEnd = end;
 	verticalNumTicks = numTick;
+	verticalResolution = resolution;
 	
 	//setup tick marks
 	DoubleTrack::InitVerticalAxis();
@@ -93,7 +121,36 @@ void DoubleTrack::OnPaint(wxPaintEvent& event)
 
 void DoubleTrack::OnLeftMouseClick(wxMouseEvent& event)
 {
-	graphEditor->mouseDownLeftClick();
+	double mouseTimePoint; 
+	int mouseYPoint;
+	bool legitValues = true;
+	
+	graphEditor->mouseDownLeftClick(verticalStart,verticalEnd,verticalResolution,
+									mouseTimePoint, mouseYPoint,legitValues);
+	
+	if(legitValues)
+	{
+		//convert mouse y point to output value
+		double output = ((double)TRACK_HEIGHT - mouseYPoint) * ((verticalEnd - verticalStart) / double(TRACK_HEIGHT) ) - verticalEnd;
+		
+		//put it in the map
+		map_time_output.emplace(mouseTimePoint, output);
+	}
+	event.Skip();
+}
+
+void DoubleTrack::OnRightMouseClick(wxCommandEvent& event)
+{
+	double mouseTimePoint;
+	bool legitValue = true;
+	
+	graphEditor->mouseDownRightClick(mouseTimePoint, legitValue);
+	
+	if(legitValue)
+	{
+		//remove point from the map
+		map_time_output.erase(mouseTimePoint);
+	}
 	event.Skip();
 }
 

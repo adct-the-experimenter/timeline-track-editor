@@ -64,10 +64,13 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	double start = -10.0f; //lowest value
 	double end = 10.0f; //highest value
 	int numTicks = 11; //number of ticks between lowest value and highest value including zero
+	double resolution = 1;
 	
-	track1->SetBoundsForVariable(start,end,numTicks); //setup bounds for vertical axis
+	track1->SetupAxisForVariable(start,end,resolution,numTicks); //setup bounds for vertical axis
 	
-	timeFrame->GetTimelineWindow()->AddTrack(track1,space);
+	track1->SetReferenceToVarToManipulate(&someVarToChange);
+	
+	timeFrame->AddTrack(track1,space);
 	
 	track1->Show();
 	timeFrame->Show(true);
