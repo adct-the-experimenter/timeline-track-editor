@@ -37,6 +37,12 @@ IMPORTANT NOTE: TIME_RESOLUTION must be 500 ms or larger for best results.
 
 Add a track by initializing it in the main frame of the application and then use timeline window function TimelineWindow::AddTrack.
 
+	//declare a function to use if variable changes
+	void FunctionForSomeVarAfterChange()
+	{
+		std::cout << "function for some var called! Do something now that double-type SomeVarToChange has changed\n";
+	}
+	
 	MyFrame::MyFrame()
 	{
 		//Code for custom menus such as file,edit,help, etc. go here
@@ -60,6 +66,9 @@ Add a track by initializing it in the main frame of the application and then use
 		// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
 		//and not go out of scope or else a segmentation fault happens
 		track1->SetReferenceToVarToManipulate(&someVarToChange); 
+		
+		//set function to call after variable to manipulate has changed
+		track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);
 
 		//add track to time frame
 		timeFrame->AddTrack(track1,space);
@@ -67,6 +76,7 @@ Add a track by initializing it in the main frame of the application and then use
 		track1->Show(); //show the track
 		timeFrame->Show(true); //show the timeframe
 	}
+
 	
 For further customization use DoubleTrack class as a template to create a new class to handle specific class types.
 

@@ -23,6 +23,8 @@ bool MyApp::OnInit()
     return true;
 }
 
+
+
 void MyApp::OnIdle(wxIdleEvent &event)
 {
     std::cout << "MyApp is Idle." << std::endl;
@@ -30,6 +32,12 @@ void MyApp::OnIdle(wxIdleEvent &event)
     event.RequestMore();
     
     
+}
+
+//declare a function to use if variable changes
+void FunctionForSomeVarAfterChange()
+{
+	std::cout << "function for some var called! Do something now that double-type SomeVarToChange has changed\n";
 }
 
 MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
@@ -73,6 +81,9 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
 	//and not go out of scope or else a segmentation fault happens
 	track1->SetReferenceToVarToManipulate(&someVarToChange); 
+	
+	//set function to call after variable to manipulate has changed
+	track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);
 	
 	//add track to time frame
 	timeFrame->AddTrack(track1,space);

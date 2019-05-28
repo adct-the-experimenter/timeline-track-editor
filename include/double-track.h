@@ -4,6 +4,10 @@
 #include "track.h"
 #include "editor-graph.h"
 
+#include <functional>   // std::function, std::negate
+
+
+
 class DoubleTrack : public Track
 {
 
@@ -33,6 +37,8 @@ public:
     
     virtual void FunctionToCallEveryTimeInTimerLoop();
     
+    void SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction); 
+    
 private:
 
 	double* varToManipulatePtr;
@@ -51,6 +57,14 @@ private:
     //2d map to hold output at certain time, for quick reading
     std::unordered_map <double, double> map_time_output;
     
+    std::function < void() > func_after_var_change;
+    
+    struct VarFuncPtrHolder
+    {
+		double* ptrToDoubleVar;
+		std::function < void()> functionPtr;
+	};
+	
 };
 
 #endif

@@ -7,12 +7,14 @@ DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 	Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
 	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DoubleTrack::OnLeftMouseClick));
 	Connect(wxEVT_CONTEXT_MENU, wxCommandEventHandler(DoubleTrack::OnRightMouseClick));
+		
 }
 
 void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
 {
 	if(varToManipulatePtr != nullptr)
 	{
+		//change variable
 		if(graphEditor != nullptr)
 		{
 			double thisTime = DoubleTrack::GetCurrentTime();
@@ -30,7 +32,16 @@ void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
 				std::unordered_map<double,double>::const_iterator got = map_time_output.find (thisTime);
 				
 				//std::cout << "value " << got->second << " found at time " << got->first << std::endl;
-				*varToManipulatePtr = got->second;
+				if(*varToManipulatePtr != got->second)
+				{
+					*varToManipulatePtr = got->second;
+					//call this void function after variable change
+					//if it has a callable function target
+					if(func_after_var_change)
+					{
+						func_after_var_change();
+					}
+				}
 			}
 		}
 	}
@@ -50,10 +61,10 @@ void DoubleTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
 	Track::InitTrack(parent,timeTickVector);
 	
+	//initialize graph editor
 	graphEditor = new EditorGraph(this);
 	graphEditor->SetReferenceToTimeTickVector(timeTickVector);
 	
-	//wxStaticText *st1 = new wxStaticText(this, wxID_ANY, wxT("This is a double track."), wxPoint(25, 80) );
 }
 
 void DoubleTrack::SetupAxisForVariable(double& start, double& end,double& resolution, int& numTick)
@@ -154,4 +165,4 @@ void DoubleTrack::OnRightMouseClick(wxCommandEvent& event)
 	event.Skip();
 }
 
-
+void DoubleTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction){func_after_var_change = thisFunction;}
