@@ -39,6 +39,7 @@ public:
     
     void SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction); 
     
+    void render(wxDC& dc);
 private:
 
 	double* varToManipulatePtr;
@@ -58,12 +59,6 @@ private:
     std::unordered_map <double, double> map_time_output;
     
     std::function < void() > func_after_var_change;
-    
-    struct VarFuncPtrHolder
-    {
-		double* ptrToDoubleVar;
-		std::function < void()> functionPtr;
-	};
 	
 };
 

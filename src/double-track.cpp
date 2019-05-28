@@ -120,9 +120,13 @@ void DoubleTrack::OnScroll(wxScrollEvent& event)
 
 void DoubleTrack::OnPaint(wxPaintEvent& event)
 {
-	//std::cout << "Current Time in Track:" << *current_time_pos_pointer << std::endl;
 	wxPaintDC dc(this);
 
+	DoubleTrack::render(dc);
+}
+
+void DoubleTrack::render(wxDC& dc)
+{
 	PrepareDC(dc); //prepare device context for drawing a scrolling image
 	
 	graphEditor->render(dc,&m_vertical_var_num);
