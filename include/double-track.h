@@ -40,6 +40,9 @@ public:
     void SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction); 
     
     void render(wxDC& dc);
+    void logic_left_click();
+    void logic_right_click();
+    
 private:
 
 	double* varToManipulatePtr;

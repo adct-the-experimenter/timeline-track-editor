@@ -136,6 +136,18 @@ void DoubleTrack::render(wxDC& dc)
 
 void DoubleTrack::OnLeftMouseClick(wxMouseEvent& event)
 {
+	DoubleTrack::logic_left_click();
+	event.Skip();
+}
+
+void DoubleTrack::OnRightMouseClick(wxCommandEvent& event)
+{
+	DoubleTrack::logic_right_click();
+	event.Skip();
+}
+
+void DoubleTrack::logic_left_click()
+{
 	double mouseTimePoint; 
 	int mouseYPoint;
 	bool legitValues = true;
@@ -151,10 +163,10 @@ void DoubleTrack::OnLeftMouseClick(wxMouseEvent& event)
 		//put it in the map
 		map_time_output.emplace(mouseTimePoint, output);
 	}
-	event.Skip();
+	
 }
 
-void DoubleTrack::OnRightMouseClick(wxCommandEvent& event)
+void DoubleTrack::logic_right_click()
 {
 	double mouseTimePoint;
 	bool legitValue = true;
@@ -166,7 +178,6 @@ void DoubleTrack::OnRightMouseClick(wxCommandEvent& event)
 		//remove point from the map
 		map_time_output.erase(mouseTimePoint);
 	}
-	event.Skip();
 }
 
 void DoubleTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction){func_after_var_change = thisFunction;}
