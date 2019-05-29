@@ -2,6 +2,8 @@
 
 DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 {
+	varToManipulatePtr = nullptr;
+	graphEditor = nullptr;
 	
 	Connect(wxEVT_PAINT, wxPaintEventHandler(DoubleTrack::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
