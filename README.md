@@ -37,10 +37,14 @@ IMPORTANT NOTE: TIME_RESOLUTION must be 500 ms or larger for best results.
 
 Add a track by initializing it in the main frame of the application and then use timeline window function TimelineWindow::AddTrack.
 
+	//declare variable to change
+	double someVarToChange; 
+	
 	//declare a function to use if variable changes
 	void FunctionForSomeVarAfterChange()
 	{
-		std::cout << "function for some var called! Do something now that double-type SomeVarToChange has changed\n";
+		std::cout << "someVarToChange:" << someVarToChange << std::endl;
+		std::cout << "function for some var change called! Do something now that double-type SomeVarToChange has changed\n";
 	}
 	
 	MyFrame::MyFrame()
@@ -66,12 +70,16 @@ Add a track by initializing it in the main frame of the application and then use
 		// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
 		//and not go out of scope or else a segmentation fault happens
 		track1->SetReferenceToVarToManipulate(&someVarToChange); 
-		
-		//set function to call after variable to manipulate has changed
-		track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);
 
+		//set function to call after variable to manipulate has changed
+		//optional
+		track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);
+		
 		//add track to time frame
 		timeFrame->AddTrack(track1,space);
+		//add function to call during playback to timeframe 
+		//so that someVarToChange can be changed according to Track FunctionToCallEveryTimeInTimerLoop
+		timeFrame->AddTrackFunctionToCallInTimerLoop(track1);
 
 		track1->Show(); //show the track
 		timeFrame->Show(true); //show the timeframe
