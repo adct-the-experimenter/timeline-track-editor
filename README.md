@@ -70,6 +70,14 @@ Add a track by initializing it in the main frame of the application and then use
 		// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
 		//and not go out of scope or else a segmentation fault happens
 		track1->SetReferenceToVarToManipulate(&someVarToChange); 
+		
+		//add block of space between timeline and track
+		int spaceBlockSize = 100;
+		timeFrame->AddSpacerBlock(spaceBlockSize);
+		
+		//add text to the timeline window at certain point
+		wxPoint textPoint; textPoint.x = 100; textPoint.y = 100;
+		timeFrame->AddText("Track for someVarToChange",textPoint);
 
 		//set function to call after variable to manipulate has changed
 		//optional
