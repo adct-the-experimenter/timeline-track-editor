@@ -2,14 +2,19 @@
 #define AUDIO_TRACK_H
 
 #include "track.h"
+#include "audio-graph.h"
+
+#include "openalsoft-player.h"
 
 #include <functional>   // std::function, std::negate
 
-class DoubleTrack : public Track
+//Class used to manipulate placement of audio samples in timeline.
+
+class AudioTrack : public Track
 {
 
 public:
-    DoubleTrack(const wxString& title);
+    AudioTrack(const wxString& title);
     
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
 	
@@ -45,7 +50,10 @@ public:
     
 private:
 
-	double* varToManipulatePtr;
+	//source to manipulate
+	ALuint* sourceToManipulatePtr;
+	
+	
 	
 	double verticalStart; //vertical axis start
 	double verticalEnd; //vertical axis end
@@ -56,7 +64,7 @@ private:
 	void InitVerticalAxis();
 	std::vector<double> LinearSpacedArray(double a, double b, std::size_t N);
 	
-    EditorGraph* graphEditor;
+    AudioGraph* m_audio_graph;
     
     //2d map to hold output at certain time, for quick reading
     std::unordered_map <double, double> map_time_output;

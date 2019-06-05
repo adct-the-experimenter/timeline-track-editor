@@ -21,6 +21,7 @@ void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
 		{
 			double thisTime = DoubleTrack::GetCurrentTime();
 			
+			
 			//check if there is  a point at that time value
 			if ( map_time_output.find(thisTime) == map_time_output.end() ) 
 			{

@@ -8,20 +8,19 @@
 
 #include <wx/dcbuffer.h>
 
+//Class used to only plot audio waveforms
+
 class AudioGraph : public wxPanel
 {
 
 public:
     AudioGraph(wxWindow* parent);
     
-    template <typename T>
-    void mouseDownLeftClick(T& vertStart, T& vertEnd, T& vertRes,
-							double& time, int& relMouseY, bool& legitValues);
+    void mouseDownLeftClick();
     
-    void mouseDownRightClick(double& time,bool& legitValue);
+    void mouseDownRightClick();
     
-    template <typename T>
-    void render(wxDC& dc, std::vector <T> *verticalAxisVector);
+    void render(wxDC& dc, std::vector <double> *verticalAxisVector);
     
     void SetReferenceToTimeTickVector(std::vector <int> *thisVector); 
 	
@@ -42,8 +41,8 @@ private:
 	
 	//functions to draw axes 
 	void DrawHorizontalAxis(wxDC& dc);
-	template <typename T>
-	void DrawVerticalAxis(wxDC& dc,std::vector <T> *verticalAxisVector);
+
+	void DrawVerticalAxis(wxDC& dc,std::vector <double> *verticalAxisVector);
 	
 };
 
