@@ -29,24 +29,27 @@
 OpenALSoftPlayer::OpenALSoftPlayer()
 {
 	/* Generate the buffers*/
-    alGenBuffers(NUM_BUFFERS, player->buffers);
+    alGenBuffers(NUM_BUFFERS, buffers);
     assert(alGetError() == AL_NO_ERROR && "Could not create buffers");
     
 }
 
 OpenALSoftPlayer::~OpenALSoftPlayer()
 {
-	ClosePlayerFile(player);
+	ClosePlayerFile();
 
     alDeleteBuffers(NUM_BUFFERS, buffers);
     if(alGetError() != AL_NO_ERROR)
-	fprintf(stderr, "Failed to delete object buffer IDs\n");
+    {
+		fprintf(stderr, "Failed to delete object buffer IDs\n");
+	}
+	
 	
 	buffer_size = 0;
 	infile = nullptr;
 }
 
-void OpenALSoftPlayer::InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
+bool OpenALSoftPlayer::InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
 {
 	//use default audio device
 	thisAudioDevice = alcOpenDevice(NULL);
@@ -91,19 +94,17 @@ void OpenALSoftPlayer::InitSource(ALuint* source)
 
     /* Set parameters so mono sources play out the front-center speaker and
      * won't distance attenuate. */
-    alSource3i(source, AL_POSITION, 0, 0, -1);
-    alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
-    alSourcei(source, AL_ROLLOFF_FACTOR, 0);
+    alSource3i(*source, AL_POSITION, 0, 0, -1);
+    alSourcei(*source, AL_SOURCE_RELATIVE, AL_TRUE);
+    alSourcei(*source, AL_ROLLOFF_FACTOR, 0);
 	assert(alGetError() == AL_NO_ERROR && "Could not set source parameters");
 }
 
 int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 {
-    Uint32 frame_size;
+    uint32_t frame_size;
     
     OpenALSoftPlayer::ClosePlayerFile();
-    
-    SF_INFO	sfinfo;
 
 	/* The SF_INFO struct must be initialized before using it.*/
 	memset (&sfinfo, 0, sizeof (sfinfo)) ;
@@ -113,9 +114,9 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	{
 		std::cout << "Unable to open file" << filename << "\n";
 		std::string error;
-		error.append(sf_sterror(NULL));
+		error.append(sf_strerror(NULL));
 		std::cout << error << std::endl;
-		return;
+		return 0;
 	 }
 
     /* Get the stream format, and figure out the OpenAL format */
@@ -124,7 +125,7 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	{	std::cout << "Not able to process more than "; 
 		std::cout << std::to_string(MAX_CHANNELS); 
 		std::cout << "%d channels.\n";
-		return;
+		return 0;
 	}
 
 	/* Get the sound format, and figure out the OpenAL format */
@@ -142,7 +143,7 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 		else
 		{
 			std::cout << "Unsupported sample format for mono. Must be 8-bit or 16-bit";
-			return;
+			return 0;
 		}
 	}
 	//else if audio sample has 2 channels
@@ -157,14 +158,14 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 		else
 		{
 			std::cout << "Unsupported sample format for stereo. Must be 8-bit or 16-bit.";
-			return;
+			return 0;
 		}
 	}
 	//else notify that channel count is unsupported
 	else
 	{
 		std::cout << "Unsupported channel count. Must be 1 or 2 channels.\n";
-		return;
+		return 0;
 	}
 	
     sample_rate = sfinfo.samplerate;
@@ -173,7 +174,7 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	frame_size = sfinfo.channels * (sfinfo.format & 0xFF) / 8;
 
     /* Set the buffer size, given the desired millisecond length. */
-    buffer_size = (Uint64)sample_rate * BUFFER_TIME_MS/1000 * frame_size;
+    buffer_size = (uint64_t)sample_rate * BUFFER_TIME_MS/1000 * frame_size;
     
     return 1;
 }
@@ -193,12 +194,12 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     size_t i;
 
     /* Rewind the source position and clear the buffer queue */
-    alSourceRewind(source);
-    alSourcei(source, AL_BUFFER, 0);
+    alSourceRewind(*source);
+    alSourcei(*source, AL_BUFFER, 0);
     
     if(buffer_size != 0)
     {
-		return;
+		return 0;
 	}
 	
     /* Fill the buffer queue */
@@ -213,14 +214,14 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}
 
-		slen = data.size() * sizeof(uint16_t); //get size of data in bytes
+		uint32_t slen = data.size() * sizeof(uint16_t); //get size of data in bytes
 
 		std::cout << "Size of data in bytes: " << slen << "\n";
 		//if sample buffer is null or size of buffer data is zero, notify of error
 		if(slen == 0)
 		{
 			std::cout << "Failed to read audio from file.\n";
-			return;
+			return 0;
 		}
 
 		double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -241,8 +242,8 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     
 
     /* Now queue and start playback! */
-    alSourceQueueBuffers(source, i, buffers);
-    alSourcePlay(source);
+    alSourceQueueBuffers(*source, i, buffers);
+    alSourcePlay(*source);
     if(alGetError() != AL_NO_ERROR)
     {
         fprintf(stderr, "Error starting playback\n");
@@ -257,8 +258,8 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
     ALint processed, state;
 
     /* Get relevant source info */
-    alGetSourcei(source, AL_SOURCE_STATE, &state);
-    alGetSourcei(source, AL_BUFFERS_PROCESSED, &processed);
+    alGetSourcei(*source, AL_SOURCE_STATE, &state);
+    alGetSourcei(*source, AL_BUFFERS_PROCESSED, &processed);
     
     if(alGetError() != AL_NO_ERROR)
     {
@@ -270,9 +271,9 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
     while(processed > 0)
     {
         ALuint bufid;
-        Uint32 slen;
+        uint32_t slen;
 
-        alSourceUnqueueBuffers(source, 1, &bufid);
+        alSourceUnqueueBuffers(*source, 1, &bufid);
         processed--;
 
         /* Read the next chunk of data, refill the buffer, and queue it
@@ -294,7 +295,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 		if(slen == 0)
 		{
 			std::cout << "Failed to read audio from file.\n";
-			return;
+			return 0;
 		}
 
 		double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -302,9 +303,8 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 
         if(slen > 0)
         {
-            alBufferData(bufid, player->format, player->sample->buffer, slen,
-                         player->srate);
-            alSourceQueueBuffers(player->source, 1, &bufid);
+            alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
+            alSourceQueueBuffers(*source, 1, &bufid);
         }
         if(alGetError() != AL_NO_ERROR)
         {
@@ -319,11 +319,11 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
         ALint queued;
 
         /* If no buffers are queued, playback is finished */
-        alGetSourcei(source, AL_BUFFERS_QUEUED, &queued);
+        alGetSourcei(*source, AL_BUFFERS_QUEUED, &queued);
         if(queued == 0)
             return 0;
 
-        alSourcePlay(source);
+        alSourcePlay(*source);
         if(alGetError() != AL_NO_ERROR)
         {
             fprintf(stderr, "Error restarting playback\n");

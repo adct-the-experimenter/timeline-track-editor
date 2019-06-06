@@ -1,12 +1,19 @@
 #include "audio-track.h"
 
-AudioTrack::AudioTrack(const wxString& title)
+AudioTrack::AudioTrack(const wxString& title) : Track(title)
 {
 	
 }
-    
 
-virtual void AudioTrack::FunctionToCallEveryTimeInTimerLoop()
+//Audio related functions
+
+void AudioTrack::SetReferenceToSourceToManipulate(ALuint* thisSource){sourceToManipulatePtr = thisSource;}
+
+void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
+
+//Track related functions
+
+void AudioTrack::FunctionToCallEveryTimeInTimerLoop()
 {
 	
 }

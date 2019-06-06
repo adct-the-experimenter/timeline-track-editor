@@ -33,6 +33,8 @@ set(SOURCES
 			src/timeline-frame.cpp
 			src/timeline-window.cpp
 			src/playback-controls.cpp
+			src/audio-track.cpp
+			src/openalsoft-player.cpp
 			src/double-track.cpp
 			src/editor-graph.cpp
 			src/track.cpp

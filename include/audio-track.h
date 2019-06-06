@@ -16,6 +16,11 @@ class AudioTrack : public Track
 public:
     AudioTrack(const wxString& title);
     
+//Audio related functions
+	void SetReferenceToSourceToManipulate(ALuint* thisSource);
+	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
+    
+//Track related Functions
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
 	
 	//function to set bounds for variable to change as well as number of ticks to draw
@@ -53,7 +58,8 @@ private:
 	//source to manipulate
 	ALuint* sourceToManipulatePtr;
 	
-	
+	//pointer to audio player to use
+	OpenALSoftPlayer* audioPlayerPtr;
 	
 	double verticalStart; //vertical axis start
 	double verticalEnd; //vertical axis end

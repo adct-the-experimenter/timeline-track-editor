@@ -1,6 +1,11 @@
 #ifndef OPENALSOFT_PLAYER
 #define OPENALSOFT_PLAYER
 
+#include "AL/al.h" //header for OpenAL Soft
+#include "AL/alc.h" //header for OpenAL Soft
+#include "AL/alext.h" //header for OpenAL Soft
+
+
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -10,9 +15,6 @@
 
 #include "time.h"
 
-#include "AL/al.h" //header for OpenAL Soft
-#include "AL/alc.h" //header for OpenAL Soft
-#include "AL/alext.h" //header for OpenAL Soft
 
 
 #include "sndfile.h"
@@ -27,17 +29,14 @@
 #define BUFFER_TIME_MS 200 // 200 milliseconds 
 #define MAX_CHANNELS 2
 
-class OpenALSoftPlayer()
+class OpenALSoftPlayer
 {
 public:
 	OpenALSoftPlayer();
 	~OpenALSoftPlayer();
 	
 	//Initialize OpenAL Soft system
-	void InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext);
-	
-	//initialize audio device and context passed into openal soft
-	void InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisContext);
+	bool InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext);
 	
 	//function to initialize external source 
 	void InitSource(ALuint* source);
@@ -68,7 +67,7 @@ private:
     
     ALuint buffers[NUM_BUFFERS];
 	//size of temporary buffers to read
-	Uint32 buffer_size;
+	uint32_t buffer_size;
 
     /* The format of the output stream */
     ALenum format;
@@ -76,6 +75,9 @@ private:
 	
 	//libsndfile file handle for input file
 	SNDFILE	*infile;
+	
+	//has info on file loaded
+	SF_INFO sfinfo;
 };
 
 #endif
