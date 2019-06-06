@@ -19,7 +19,7 @@ endif()
 #Note: for FreeBSD, use cmake .. -DwxWidgets_CONFIG_EXECUTABLE=/usr/local/bin/wxgtk3u-3.1-config
 
 #For the shared library:
-set ( PROJECT_LINK_LIBS ${wxWidgets_LIBRARIES} )
+set ( PROJECT_LINK_LIBS ${wxWidgets_LIBRARIES} openal.so sndfile.so)
 #where to find library files .so 
 link_directories( /usr/lib /usr/local/lib ) 
 
@@ -34,6 +34,7 @@ set(SOURCES
 			src/timeline-window.cpp
 			src/playback-controls.cpp
 			src/audio-track.cpp
+			src/audio-graph.cpp
 			src/openalsoft-player.cpp
 			src/double-track.cpp
 			src/editor-graph.cpp

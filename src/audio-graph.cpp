@@ -1,45 +1,45 @@
 #include "audio-graph.h"
 
-AudioGraph::AudioGraph(wxWindow* parent)
+AudioGraph::AudioGraph(wxWindow* parent) : wxPanel(parent)
 {
 	
 }
     
-void AudioGraph::AudioGraphmouseDownLeftClick()
+void AudioGraph::mouseDownLeftClick()
 {
 	
 }
 
-void AudioGraph::AudioGraphmouseDownRightClick()
+void AudioGraph::mouseDownRightClick()
 {
 	
 }
 
-void AudioGraph::AudioGraphrender(wxDC& dc, std::vector <double> *verticalAxisVector)
+void AudioGraph::render(wxDC& dc, std::vector <double> *verticalAxisVector)
 {
 	
 }
 
-void AudioGraph::AudioGraphSetReferenceToTimeTickVector(std::vector <int> *thisVector){}
+void AudioGraph::SetReferenceToTimeTickVector(std::vector <int> *thisVector){}
 
 
-int AudioGraph::AudioGraphGetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValue)
+int AudioGraph::GetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValue)
 {
 	
 }
 
 
-void AudioGraph::AudioGraphDrawCurrentPointsOnGraph(wxDC& dc)
+void AudioGraph::DrawCurrentPointsOnGraph(wxDC& dc)
 {
 	
 }
 
-void AudioGraph::AudioGraphDrawHorizontalAxis(wxDC& dc)
+void AudioGraph::DrawHorizontalAxis(wxDC& dc)
 {
 	
 }
 
-void AudioGraph::AudioGraphDrawVerticalAxis(wxDC& dc,std::vector <double> *verticalAxisVector)
+void AudioGraph::DrawVerticalAxis(wxDC& dc,std::vector <double> *verticalAxisVector)
 {
 	
 }
