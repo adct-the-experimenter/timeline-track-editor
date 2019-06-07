@@ -70,8 +70,12 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     //Code to initialize timeline track editor part of GUI
     
     TimelineFrame *timeFrame = new TimelineFrame(this); 
+
+//Initialize Double Track
     
     int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
+
+    
 	DoubleTrack* track1 = new DoubleTrack("Variable");
 	
 	double start = -10.0f; //lowest value
@@ -79,7 +83,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	int numTicks = 11; //number of ticks between lowest value and highest value including zero
 	double resolution = 1; //the fineness of how much variable can be incremented/decremented by
 	
-	track1->SetupAxisForVariable(start,end,resolution,numTicks); //setup bounds for vertical axis
+	//setup bounds for vertical axis
+	track1->SetupAxisForVariable(start,end,resolution,numTicks); 
 	
 	//Put in the variable to change with the timeline.
 	// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
@@ -104,7 +109,44 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	//so that someVarToChange can be changed according to Track FunctionToCallEveryTimeInTimerLoop
 	timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track1);
 	
+//Initialize Audio Track
+
+	//Initialize OpenAL Soft
+	
+	audioPlayer = new OpenALSoftPlayer();
+	
+	if(!audioPlayer->InitOpenALSoft(audioDevice,alContext))
+	{
+		std::cout << "Unable to make audio track because OpenAL SOft could not be initialized! \n";
+	}
+	else
+	{
+		audioPlayer->SetReferenceToAudioContext(alContext);
+		audioPlayer->SetReferenceToAudioDevice(audioDevice);
+		
+		audioPlayer->InitBuffersForStreaming();
+		
+		AudioTrack* track2 = new AudioTrack("Audio");
+	
+		start = 0.0f; //lowest value
+		end = 10.0f; //highest value
+		numTicks = 11; //number of ticks between lowest value and highest value including zero
+		resolution = 1; //the fineness of how much variable can be incremented/decremented by
+
+		//setup bounds for vertical axis
+		track2->SetupAxisForVariable(start,end,resolution,numTicks);
+		
+		//add track to time frame
+		timeFrame->AddTrack(track2,space);
+		
+		track2->Show();
+	}
+	
+	
+	
+//Show Tracks and Time Frame
 	track1->Show(); //show the track
+
 	timeFrame->Show(true); //show the timeframe
 		
 }
@@ -114,6 +156,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 
 void MyFrame::OnExit(wxCommandEvent& event)
 {
+	audioPlayer->CloseOpenALSoft(audioDevice,alContext);
     Close( true ); //close window
 }
 

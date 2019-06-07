@@ -60,7 +60,7 @@ public:
     enum State
     {
 		PLAYER_NULL = 0,
-		PLAYER_STARTED,
+		PLAYER_PLAYING,
 		PLAYER_PAUSED,
 		PLAYER_REWINDING
 	};
@@ -91,6 +91,11 @@ private:
     std::unordered_map <double, double> map_time_output;
     
     std::function < void() > func_after_var_change;
+    
+    wxButton* browseButton;
+    void OnBrowse(wxCommandEvent& event);
+    
+    std::string soundFilePath;
 	
 };
 

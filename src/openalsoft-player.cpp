@@ -28,9 +28,6 @@
 
 OpenALSoftPlayer::OpenALSoftPlayer()
 {
-	/* Generate the buffers*/
-    alGenBuffers(NUM_BUFFERS, buffers);
-    assert(alGetError() == AL_NO_ERROR && "Could not create buffers");
     
 }
 
@@ -47,6 +44,13 @@ OpenALSoftPlayer::~OpenALSoftPlayer()
 	
 	buffer_size = 0;
 	infile = nullptr;
+}
+
+void OpenALSoftPlayer::InitBuffersForStreaming()
+{
+	// Generate the buffers
+    alGenBuffers(NUM_BUFFERS, buffers);
+    assert(alGetError() == AL_NO_ERROR && "Could not create buffers");
 }
 
 bool OpenALSoftPlayer::InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
@@ -87,6 +91,9 @@ bool OpenALSoftPlayer::InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* th
 	return true;
 }
 
+void OpenALSoftPlayer::SetReferenceToAudioDevice(ALCdevice* thisAudioDevice){audioDevicePtr = thisAudioDevice;}
+void OpenALSoftPlayer::SetReferenceToAudioContext(ALCcontext* thisContext){alContextPtr = thisContext;}
+
 void OpenALSoftPlayer::InitSource(ALuint* source)
 {
 	alGenSources(1, source);
@@ -102,6 +109,7 @@ void OpenALSoftPlayer::InitSource(ALuint* source)
 
 void OpenALSoftPlayer::CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
 {
+	std::cout << "Close OpenAL Soft called!\n";
 	alcDestroyContext(thisAudioContext);	//delete context
 	alcCloseDevice(thisAudioDevice);	//close device
 }
@@ -342,7 +350,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 
 void OpenALSoftPlayer::PlaySource(ALuint* thisSource)
 {
-	alSourcePlay(*source);
+	alSourcePlay(*thisSource);
 }
 
 void OpenALSoftPlayer::PauseSource(ALuint* thisSource)

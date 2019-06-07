@@ -36,6 +36,9 @@ public:
 	//Initialize OpenAL Soft system
 	bool InitOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext);
 	
+	//function to initialize buffers to play for streaming
+	void InitBuffersForStreaming();
+	
 	//function to initialize external source 
 	void InitSource(ALuint* source);
 	

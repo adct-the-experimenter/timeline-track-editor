@@ -38,6 +38,7 @@ void DoubleTrack::FunctionToCallInPlayState()
 				if(*varToManipulatePtr != got->second)
 				{
 					*varToManipulatePtr = got->second;
+					
 					//call this void function after variable change
 					//if it has a callable function target
 					if(func_after_var_change)
