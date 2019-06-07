@@ -104,9 +104,6 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	//so that someVarToChange can be changed according to Track FunctionToCallEveryTimeInTimerLoop
 	timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track1);
 	
-	
-	
-	
 	track1->Show(); //show the track
 	timeFrame->Show(true); //show the timeframe
 		

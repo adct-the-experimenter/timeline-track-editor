@@ -4,6 +4,7 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 {
 	state = PLAYER_NULL;
 	sourceToManipulatePtr = nullptr;
+	audioPlayerPtr = nullptr;
 }
 
 //Audio related functions
@@ -14,26 +15,67 @@ void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPl
 
 //Track related functions
 
+void al_nssleep(unsigned long nsec)
+{
+    struct timespec ts, rem;
+    ts.tv_sec = nsec / 1000000000ul;
+    ts.tv_nsec = nsec % 1000000000ul;
+    while(nanosleep(&ts, &rem) == -1 && errno == EINTR){ts = rem;}
+}
+
 void AudioTrack::FunctionToCallInPlayState()
 {
-	if(sourceToManipulatePtr != nullptr)
+	if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
 	{
 		switch(state)
 		{
-			case PLAYER_NULL:{break;}
-			case PLAYER_STARTED:{break;}
+			case PLAYER_NULL:
+			{
+				audioPlayerPtr->StartPlayer(sourceToManipulatePtr); //start player
+				state = PLAYER_STARTED; //switch to player started state
+				break;
+			}
+			case PLAYER_STARTED:
+			{
+				audioPlayerPtr->UpdatePlayer(sourceToManipulatePtr);
+				al_nssleep(10000000);
+				break;
+			}
 		}
 		
 	}
 }
 
-void AudioTrack::FunctionToCallInPauseState(){}
+void AudioTrack::FunctionToCallInPauseState()
+{
+	if(state != PLAYER_PAUSED)
+	{
+		if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
+		{
+			audioPlayerPtr->PauseSource(sourceToManipulatePtr);
+			state = PLAYER_PAUSED;
+		}	
+	}
+}
 
-void AudioTrack::FunctionToCallInRewindState(){}
+void AudioTrack::FunctionToCallInRewindState()
+{
+	if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
+	{
+		alSourceRewind(*sourceToManipulatePtr);
+		state = PLAYER_REWINDING;
+	}
+}
 
-void AudioTrack::FunctionToCallInFastForwardState(){}
+void AudioTrack::FunctionToCallInFastForwardState()
+{
+	
+}
 
-void AudioTrack::FunctionToCallInNullState(){}
+void AudioTrack::FunctionToCallInNullState()
+{
+	
+}
 
 void AudioTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction)
 {

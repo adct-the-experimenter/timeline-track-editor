@@ -60,7 +60,9 @@ public:
     enum State
     {
 		PLAYER_NULL = 0,
-		PLAYER_STARTED
+		PLAYER_STARTED,
+		PLAYER_PAUSED,
+		PLAYER_REWINDING
 	};
     
 private:

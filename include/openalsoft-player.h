@@ -43,8 +43,12 @@ public:
 	void SetReferenceToAudioDevice(ALCdevice* thisAudioDevice);
 	void SetReferenceToAudioContext(ALCcontext* thisAudioContext);
 	
-	//function to play source
+	//functions to manipulate source
 	void PlaySource(ALuint* thisSource);
+	void PauseSource(ALuint* thisSource);
+	void RewindSource(ALuint* thisSource);
+	void StopSource(ALuint* thisSource);
+	
 	
 	//function to stream source
 	void StreamSource(ALuint* thisSource);

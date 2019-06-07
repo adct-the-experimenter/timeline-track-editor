@@ -100,6 +100,12 @@ void OpenALSoftPlayer::InitSource(ALuint* source)
 	assert(alGetError() == AL_NO_ERROR && "Could not set source parameters");
 }
 
+void OpenALSoftPlayer::CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
+{
+	alcDestroyContext(thisAudioContext);	//delete context
+	alcCloseDevice(thisAudioDevice);	//close device
+}
+
 int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 {
     uint32_t frame_size;
@@ -334,8 +340,24 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
     return 1;
 }
 
-void OpenALSoftPlayer::CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
+void OpenALSoftPlayer::PlaySource(ALuint* thisSource)
 {
-	alcDestroyContext(thisAudioContext);	//delete context
-	alcCloseDevice(thisAudioDevice);	//close device
+	alSourcePlay(*source);
 }
+
+void OpenALSoftPlayer::PauseSource(ALuint* thisSource)
+{
+	alSourcePause(*thisSource);
+}
+
+void OpenALSoftPlayer::RewindSource(ALuint* thisSource)
+{
+	alSourceRewind(*thisSource);
+}
+
+void OpenALSoftPlayer::StopSource(ALuint* thisSource)
+{
+	alSourceStop(*thisSource);
+}
+
+
