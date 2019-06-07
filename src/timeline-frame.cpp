@@ -47,10 +47,34 @@ void TimelineFrame::AddTrack(Track* thisTrack, int& space)
 	TimelineFrame::GetTimelineWindow()->AddTrack(thisTrack,space);
 }
 
-void TimelineFrame::AddTrackFunctionToCallInTimerLoop(Track* thisTrack)
+void TimelineFrame::AddTrackFunctionToCallInTimerLoopPlayState(Track* thisTrack)
 {
-	std::function< void() > func = std::bind(&Track::FunctionToCallEveryTimeInTimerLoop, thisTrack);
-	timer->AddFunctionToTimerLoop(func );
+	std::function< void() > func = std::bind(&Track::FunctionToCallInPlayState, thisTrack);
+	timer->AddFunctionToTimerLoopPlayState(func );
+}
+
+void TimelineFrame::AddTrackFunctionToCallInTimerLoopPauseState(Track* thisTrack)
+{
+	std::function< void() > func = std::bind(&Track::FunctionToCallInPauseState, thisTrack);
+	timer->AddFunctionToTimerLoopPauseState(func );
+}
+
+void TimelineFrame::AddTrackFunctionToCallInTimerLoopRewindState(Track* thisTrack)
+{
+	std::function< void() > func = std::bind(&Track::FunctionToCallInRewindState, thisTrack);
+	timer->AddFunctionToTimerLoopRewindState(func );
+}
+
+void TimelineFrame::AddTrackFunctionToCallInTimerLoopFastForwardState(Track* thisTrack)
+{
+	std::function< void() > func = std::bind(&Track::FunctionToCallInFastForwardState, thisTrack);
+	timer->AddFunctionToTimerLoopFastForwardState(func );
+}
+
+void TimelineFrame::AddTrackFunctionToCallInTimerLoopNullState(Track* thisTrack)
+{
+	std::function< void() > func = std::bind(&Track::FunctionToCallInNullState, thisTrack);
+	timer->AddFunctionToTimerLoopNullState(func );
 }
 
 void TimelineFrame::AddSpacerBlock(int space)

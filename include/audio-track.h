@@ -45,7 +45,11 @@ public:
     
     void SetReferenceToVarToManipulate(double* thisVar);
     
-    virtual void FunctionToCallEveryTimeInTimerLoop();
+    virtual void FunctionToCallInPlayState();
+    virtual void FunctionToCallInPauseState();
+    virtual void FunctionToCallInRewindState();
+    virtual void FunctionToCallInFastForwardState();
+    virtual void FunctionToCallInNullState();
     
     void SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction); 
     
@@ -53,7 +57,16 @@ public:
     void logic_left_click();
     void logic_right_click();
     
+    enum State
+    {
+		PLAYER_NULL = 0,
+		PLAYER_STARTED
+	};
+    
 private:
+	
+	//state of audio track
+	int state;
 
 	//source to manipulate
 	ALuint* sourceToManipulatePtr;

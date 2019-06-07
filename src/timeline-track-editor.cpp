@@ -102,7 +102,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	timeFrame->AddTrack(track1,space);
 	//add function to call during playback to timeframe 
 	//so that someVarToChange can be changed according to Track FunctionToCallEveryTimeInTimerLoop
-	timeFrame->AddTrackFunctionToCallInTimerLoop(track1);
+	timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track1);
 	
 	
 	

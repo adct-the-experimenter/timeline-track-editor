@@ -2,7 +2,8 @@
 
 AudioTrack::AudioTrack(const wxString& title) : Track(title)
 {
-	
+	state = PLAYER_NULL;
+	sourceToManipulatePtr = nullptr;
 }
 
 //Audio related functions
@@ -13,11 +14,26 @@ void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPl
 
 //Track related functions
 
-void AudioTrack::FunctionToCallEveryTimeInTimerLoop()
+void AudioTrack::FunctionToCallInPlayState()
 {
-	
+	if(sourceToManipulatePtr != nullptr)
+	{
+		switch(state)
+		{
+			case PLAYER_NULL:{break;}
+			case PLAYER_STARTED:{break;}
+		}
+		
+	}
 }
 
+void AudioTrack::FunctionToCallInPauseState(){}
+
+void AudioTrack::FunctionToCallInRewindState(){}
+
+void AudioTrack::FunctionToCallInFastForwardState(){}
+
+void AudioTrack::FunctionToCallInNullState(){}
 
 void AudioTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction)
 {

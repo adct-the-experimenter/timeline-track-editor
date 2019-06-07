@@ -2,8 +2,6 @@
 #define OPENALSOFT_PLAYER
 
 
-
-
 #include <cstring>
 #include <cstdlib>
 #include <cstdio>
@@ -12,8 +10,6 @@
 #include <cmath>
 
 #include "time.h"
-
-
 
 #include "sndfile.h"
 
@@ -62,6 +58,8 @@ public:
 	int StartPlayer(ALuint* source);
 	
 	int UpdatePlayer(ALuint* source);
+	
+	void CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext);
 	
 private:
 	ALCdevice* audioDevicePtr; //pointer to audio device to be used

@@ -12,7 +12,7 @@ DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 		
 }
 
-void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
+void DoubleTrack::FunctionToCallInPlayState()
 {
 	if(varToManipulatePtr != nullptr)
 	{
@@ -49,6 +49,14 @@ void DoubleTrack::FunctionToCallEveryTimeInTimerLoop()
 		}
 	}
 }
+
+void DoubleTrack::FunctionToCallInPauseState(){}
+
+void DoubleTrack::FunctionToCallInRewindState(){}
+
+void DoubleTrack::FunctionToCallInFastForwardState(){}
+
+void DoubleTrack::FunctionToCallInNullState(){}
 
 void DoubleTrack::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){Track::SetReferenceToCurrentTimeVariable(thisTimeVariable);}
 

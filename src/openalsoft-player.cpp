@@ -333,3 +333,9 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 
     return 1;
 }
+
+void OpenALSoftPlayer::CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext)
+{
+	alcDestroyContext(thisAudioContext);	//delete context
+	alcCloseDevice(thisAudioDevice);	//close device
+}
