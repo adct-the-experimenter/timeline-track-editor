@@ -17,10 +17,11 @@ void AudioGraph::mouseDownRightClick()
 
 void AudioGraph::render(wxDC& dc, std::vector <double> *verticalAxisVector)
 {
+	AudioGraph::DrawVerticalAxis(dc,verticalAxisVector);
 	AudioGraph::DrawHorizontalAxis(dc);
 }
 
-void AudioGraph::SetReferenceToTimeTickVector(std::vector <int> *thisVector){}
+void AudioGraph::SetReferenceToTimeTickVector(std::vector <int> *thisVector){timeTickVectorPtr = thisVector;}
 
 
 int AudioGraph::GetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValue)
@@ -60,5 +61,18 @@ void AudioGraph::DrawHorizontalAxis(wxDC& dc)
 
 void AudioGraph::DrawVerticalAxis(wxDC& dc,std::vector <double> *verticalAxisVector)
 {
+	wxFont font(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL,
+            wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
+	dc.SetFont(font);
 	
+	int step = (int) round( TRACK_HEIGHT / (verticalAxisVector->size()) );
+
+	dc.SetPen(wxPen(wxColour(90, 80, 60)));
+	
+	for ( size_t i=1; i <= verticalAxisVector->size(); i++ ) 
+	{
+		dc.DrawLine(1, i*step, 10, i*step);
+		//start at end to draw positive numbers on top
+		dc.DrawText( wxString::Format( wxT("%d"), (int)verticalAxisVector->at(verticalAxisVector->size() - i) ) , 0, (i*step) - 10);
+	}
 }

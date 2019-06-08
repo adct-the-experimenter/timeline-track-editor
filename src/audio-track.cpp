@@ -79,14 +79,11 @@ void AudioTrack::FunctionToCallInNullState()
 	
 }
 
-void AudioTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction)
-{
-	
-} 
+void AudioTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction){func_after_var_change = thisFunction;} 
 
 void AudioTrack::render(wxDC& dc)
 {
-	//m_audio_graph->render(dc,m_vertical_var_num);
+	m_audio_graph->render(dc,&m_vertical_var_num);
 }
 
 void AudioTrack::logic_left_click()
