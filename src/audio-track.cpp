@@ -1,5 +1,38 @@
 #include "audio-track.h"
 
+/*
+ * Code sdapted from sfprocess.c on libsndfile github
+** Copyright (C) 2001-2013 Erik de Castro Lopo <erikd@mega-nerd.com>
+**
+** All rights reserved.
+**
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**
+**	 * Redistributions of source code must retain the above copyright
+**	   notice, this list of conditions and the following disclaimer.
+**	 * Redistributions in binary form must reproduce the above copyright
+**	   notice, this list of conditions and the following disclaimer in
+**	   the documentation and/or other materials provided with the
+**	   distribution.
+**	 * Neither the author nor the names of any contributors may be used
+**	   to endorse or promote products derived from this software without
+**	   specific prior written permission.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+** TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+** PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+** CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+** EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+** PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+** OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+** WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+** OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+** ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 AudioTrack::AudioTrack(const wxString& title) : Track(title)
 {
 	state = PLAYER_NULL;
@@ -115,16 +148,68 @@ void AudioTrack::OnBrowse(wxCommandEvent& event)
 	{
 		wxString path = fileDlg.GetPath();
 		//use this path in your app
-		soundFilePath = std::string(path.mb_str());
-		std::cout << "Sound file path:" << soundFilePath << std::endl;
+		inputSoundFilePath = std::string(path.mb_str());
+		
+		std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
+		streamSoundFilePath = inputSoundFilePath;
+		streamSoundFilePath.erase(streamSoundFilePath.end()-4,streamSoundFilePath.end());
+		
+		streamSoundFilePath.append("-stream.wav");
+		std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 		
 		//create a copy of file to reference for editing
+		AudioTrack::ReadDataFromInputFile();
 		
 		//write data to .wav file to play during streaming
 		
 		//open file to play during streaming
 		//audioDevicePtr->OpenPlayerFile(soundFilePath.c_str(); 
 	}   
+}
+
+void AudioTrack::ReadDataFromInputFile()
+{
+	
+	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
+	{	
+		// Open failed, so print an error message.
+		std::cout << "Not able to open input file " <<  inputSoundFilePath << std::endl;
+		/* Print the error message from libsndfile. */
+		puts (sf_strerror (NULL)) ;
+		return;
+	} 
+
+	if (input_sfinfo.channels > MAX_CHANNELS)
+	{
+		std::cout << "Not able to process more than" <<  MAX_CHANNELS << "channels.\n";
+		return;
+	}
+	std::cout << "Successfully loaded " << inputSoundFilePath << " saving data..." << std::endl;
+	
+	// Open the stream file
+	if (! ( streamFile = sf_open (streamSoundFilePath.c_str(), SFM_WRITE, &input_sfinfo)))
+	{	
+		std::cout << "Not able to open stream file for writing" << streamFile << std::endl;
+		puts (sf_strerror (NULL)) ;
+		return;
+	} 
+	
+	//save data from file into array audio_data
+	int readcount;
+	while ((readcount = sf_read_double (inputFile, audio_data, BUFFER_LEN)))
+	{	
+		//process_data (data, readcount, sfinfo.channels) ;
+		sf_write_double (streamFile, audio_data, readcount) ;
+	}
+
+	/* Close input and stream files. */
+	sf_close(inputFile);
+	sf_close(streamFile);
+	
+	std::string messageString;
+	messageString.append("Successfully loaded and saved a copy of audio data of");
+	messageString.append(inputSoundFilePath);
+	wxMessageBox( messageString );
 }
 
 void AudioTrack::SetupAxisForVariable(double& start, double& end, double& resolution, int& numTick)

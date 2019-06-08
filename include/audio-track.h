@@ -4,9 +4,15 @@
 #include "track.h"
 #include "audio-graph.h"
 
+#include <sndfile.h>
+
 #include "openalsoft-player.h"
 
 #include <functional>   // std::function, std::negate
+
+#define	BUFFER_LEN	1024
+
+#define	MAX_CHANNELS	2
 
 //Class used to manipulate placement of audio samples in timeline.
 
@@ -67,6 +73,8 @@ public:
     
 private:
 	
+	//Audio Processes and Operations
+	
 	//state of audio track
 	int state;
 
@@ -76,15 +84,33 @@ private:
 	//pointer to audio player to use
 	OpenALSoftPlayer* audioPlayerPtr;
 	
-	double verticalStart; //vertical axis start
-	double verticalEnd; //vertical axis end
-	double verticalResolution;
-	int verticalNumTicks; //number of tick marks in vertical axis
+    std::string inputSoundFilePath;
+	
+	//array to hold audio data
+	double audio_data [BUFFER_LEN]; 
+	
+	//File handlers for input file and file to stream
+	SNDFILE *inputFile, *streamFile ;
+	
+	std::string streamSoundFilePath;
+	
+	//holds information on audio data 
+	SF_INFO input_sfinfo;
+	
+	void ReadDataFromInputFile();
+	
+	
+	//GUI
 	
 	std::vector <double> m_vertical_var_num;
 	void InitVerticalAxis();
 	std::vector<double> LinearSpacedArray(double a, double b, std::size_t N);
 	
+	double verticalStart; //vertical axis start
+	double verticalEnd; //vertical axis end
+	double verticalResolution;
+	int verticalNumTicks; //number of tick marks in vertical axis
+    
     AudioGraph* m_audio_graph;
     
     //2d map to hold output at certain time, for quick reading
@@ -94,9 +120,6 @@ private:
     
     wxButton* browseButton;
     void OnBrowse(wxCommandEvent& event);
-    
-    std::string soundFilePath;
-	
 };
 
 #endif
