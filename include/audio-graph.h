@@ -28,16 +28,19 @@ public:
 	//if no value is at that time, then legitValue is false and 0 is returned
 	int GetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValue);
 	
+	void PlotAudioDataToGraph(std::vector <double> *audio_data, int sample_rate,
+										double& verticalStart, double& verticalEnd, double& verticalResolution);
+	
 private:
 
 	std::vector <int> *timeTickVectorPtr;
-
+	 
 	std::vector <wxPoint> graph_points; //holds points drawn on graph
 	
-	std::unordered_map <double, std::vector<wxPoint>::iterator> map_time; //dictionary to keep track of which time values are occupied
+	//std::unordered_map <double, std::vector<wxPoint>::iterator> map_time; //dictionary to keep track of which time values are occupied
 	
 	//function to draw graph_points on graph
-	void DrawCurrentPointsOnGraph(wxDC& dc);
+	void DrawCurrentDataOnGraph(wxDC& dc);
 	
 	//functions to draw axes 
 	void DrawHorizontalAxis(wxDC& dc);

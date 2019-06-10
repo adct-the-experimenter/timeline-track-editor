@@ -128,10 +128,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		
 		AudioTrack* track2 = new AudioTrack("Audio");
 	
-		start = 0.0f; //lowest value
-		end = 10.0f; //highest value
+		start = -1.0f; //lowest value
+		end = 1.0f; //highest value
 		numTicks = 11; //number of ticks between lowest value and highest value including zero
-		resolution = 1; //the fineness of how much variable can be incremented/decremented by
+		resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
 
 		//setup bounds for vertical axis
 		track2->SetupAxisForVariable(start,end,resolution,numTicks);

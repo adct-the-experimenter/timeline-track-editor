@@ -71,6 +71,7 @@ public:
 		PLAYER_REWINDING
 	};
     
+    void PlotStreamAudioDataToGraph();
 private:
 	
 	//Audio Processes and Operations
@@ -86,8 +87,11 @@ private:
 	
     std::string inputSoundFilePath;
 	
-	//array to hold audio data
-	double audio_data [BUFFER_LEN]; 
+	//array to hold copy of audio data input
+	double audio_data_input_copy [BUFFER_LEN]; 
+	
+	//vector to contain audio track data for streaming
+	std::vector <double> audio_data_track_stream;
 	
 	//File handlers for input file and file to stream
 	SNDFILE *inputFile, *streamFile ;
@@ -97,8 +101,7 @@ private:
 	//holds information on audio data 
 	SF_INFO input_sfinfo;
 	
-	void ReadDataFromInputFile();
-	
+	void ReadAndCopyDataFromInputFile();
 	
 	//GUI
 	

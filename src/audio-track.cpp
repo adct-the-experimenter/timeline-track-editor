@@ -158,17 +158,19 @@ void AudioTrack::OnBrowse(wxCommandEvent& event)
 		std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 		
 		//create a copy of file to reference for editing
-		AudioTrack::ReadDataFromInputFile();
+		AudioTrack::ReadAndCopyDataFromInputFile();
 		
-		//write data to .wav file to play during streaming
+		AudioTrack::PlotStreamAudioDataToGraph();
 		
 		//open file to play during streaming
-		//audioDevicePtr->OpenPlayerFile(soundFilePath.c_str(); 
+		//audioDevicePtr->OpenPlayerFile(streamSoundFilePath.c_str());
+		 
 	}   
 }
 
-void AudioTrack::ReadDataFromInputFile()
+void AudioTrack::ReadAndCopyDataFromInputFile()
 {
+	//Read data from file
 	
 	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
 	{	
@@ -196,20 +198,33 @@ void AudioTrack::ReadDataFromInputFile()
 	
 	//save data from file into array audio_data
 	int readcount;
-	while ((readcount = sf_read_double (inputFile, audio_data, BUFFER_LEN)))
+	while ((readcount = sf_read_double (inputFile, audio_data_input_copy, BUFFER_LEN)))
 	{	
-		//process_data (data, readcount, sfinfo.channels) ;
-		sf_write_double (streamFile, audio_data, readcount) ;
+		sf_write_double (streamFile, audio_data_input_copy, readcount) ;
 	}
 
 	/* Close input and stream files. */
 	sf_close(inputFile);
 	sf_close(streamFile);
 	
+	//copy array audio data input copy to audio data track stream
+	std::copy(&audio_data_input_copy[0], 
+		&audio_data_input_copy[sizeof(audio_data_input_copy)], 
+		back_inserter(audio_data_track_stream));
+		
+	//Plot current audio data in audio data track stream
+	AudioTrack::PlotStreamAudioDataToGraph();
+	
 	std::string messageString;
 	messageString.append("Successfully loaded and saved a copy of audio data of");
 	messageString.append(inputSoundFilePath);
 	wxMessageBox( messageString );
+}
+
+void AudioTrack::PlotStreamAudioDataToGraph()
+{
+	m_audio_graph->PlotAudioDataToGraph(&audio_data_track_stream,input_sfinfo.samplerate,
+										verticalStart, verticalEnd, verticalResolution);
 }
 
 void AudioTrack::SetupAxisForVariable(double& start, double& end, double& resolution, int& numTick)
