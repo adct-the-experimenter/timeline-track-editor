@@ -24,7 +24,7 @@ TimelineFrame::TimelineFrame(wxWindow *parent) : wxFrame(parent, wxID_ANY, "Time
 	vbox->Add(hboxTimeline);
 	
 	// ensure that we have scrollbars initially
-	SetClientSize(TRACK_WIDTH/2, TRACK_HEIGHT*2);
+	SetClientSize(INITIAL_TIMELINE_WINDOW_WIDTH, INITIAL_TIMELINE_WINDOW_HEIGHT);
 	
 	//Not using SetSizer and Fit because that messes up the scrolling
 	SetSizer(vbox);
