@@ -75,9 +75,11 @@ Add a track by initializing it in the main frame of the application and then use
 		int spaceBlockSize = 100;
 		timeFrame->AddSpacerBlock(spaceBlockSize);
 		
-		//add text to the timeline window at certain point
-		wxPoint textPoint; textPoint.x = 100; textPoint.y = 100;
-		timeFrame->AddText("Track for someVarToChange",textPoint);
+		//add text to the timeline window before track to indicate what variable the track manipulates
+		wxBoxSizer* hboxText = new wxBoxSizer(wxHORIZONTAL);
+		wxStaticText *text = new wxStaticText(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Track for someVarToChange"),wxDefaultPosition );
+		hboxText->Add(text);
+		timeFrame->AddBoxSizer(hboxText);
 
 		//set function to call after variable to manipulate has changed
 		//optional
