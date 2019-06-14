@@ -219,13 +219,6 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	
 	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
 	std::cout << "Duration of sound:" << seconds << "s. \n";
-	
-	//save data from file into array audio_data
-	//int readcount;
-	//while ((readcount = sf_read_double (inputFile, audio_data_input_copy, BUFFER_LEN)))
-	//{	
-	//	sf_write_double (streamFile, audio_data_input_copy, readcount) ;
-	//}
 
 	/* Close input and stream files. */
 	sf_close(inputFile);
@@ -249,6 +242,7 @@ void AudioTrack::PlotStreamAudioDataToGraph()
 {
 	m_audio_graph->PlotAudioDataToGraph(&audio_data_track_stream,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);
+	Refresh();
 }
 
 void AudioTrack::SetupAxisForVariable(double& start, double& end, double& resolution, int& numTick)

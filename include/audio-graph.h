@@ -35,7 +35,8 @@ private:
 
 	std::vector <int> *timeTickVectorPtr;
 	 
-	std::vector <wxPoint> graph_points; //holds points drawn on graph
+	std::vector <wxPoint> max_graph_points; //holds points drawn on graph
+	std::vector <wxPoint> min_graph_points;
 	
 	//std::unordered_map <double, std::vector<wxPoint>::iterator> map_time; //dictionary to keep track of which time values are occupied
 	
