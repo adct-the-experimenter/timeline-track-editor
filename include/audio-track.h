@@ -88,7 +88,8 @@ private:
     std::string inputSoundFilePath;
 	
 	//array to hold copy of audio data input
-	double audio_data_input_copy [BUFFER_LEN]; 
+	//double audio_data_input_copy [BUFFER_LEN]; 
+	std::vector<double> audio_data_input_copy;
 	
 	//vector to contain audio track data for streaming
 	std::vector <double> audio_data_track_stream;

@@ -1,7 +1,7 @@
 #include "audio-track.h"
 
 /*
- * Code sdapted from sfprocess.c on libsndfile github
+ * Code adapted from sfprocess.c on libsndfile github
 ** Copyright (C) 2001-2013 Erik de Castro Lopo <erikd@mega-nerd.com>
 **
 ** All rights reserved.
@@ -40,6 +40,8 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 	audioPlayerPtr = nullptr;
 	
 	m_audio_graph = nullptr;
+	
+	audio_data_input_copy.resize(BUFFER_LEN);
 }
 
 //Audio related functions
@@ -151,10 +153,7 @@ void AudioTrack::OnBrowse(wxCommandEvent& event)
 		inputSoundFilePath = std::string(path.mb_str());
 		
 		std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
-		streamSoundFilePath = inputSoundFilePath;
-		streamSoundFilePath.erase(streamSoundFilePath.end()-4,streamSoundFilePath.end());
-		
-		streamSoundFilePath.append("-stream.wav");
+		streamSoundFilePath = "../resources/stream.wav";
 		std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 		
 		//create a copy of file to reference for editing
@@ -171,7 +170,6 @@ void AudioTrack::OnBrowse(wxCommandEvent& event)
 void AudioTrack::ReadAndCopyDataFromInputFile()
 {
 	//Read data from file
-	
 	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
 	{	
 		// Open failed, so print an error message.
@@ -180,7 +178,7 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 		puts (sf_strerror (NULL)) ;
 		return;
 	} 
-
+		
 	if (input_sfinfo.channels > MAX_CHANNELS)
 	{
 		std::cout << "Not able to process more than" <<  MAX_CHANNELS << "channels.\n";
@@ -196,12 +194,38 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 		return;
 	} 
 	
-	//save data from file into array audio_data
-	int readcount;
-	while ((readcount = sf_read_double (inputFile, audio_data_input_copy, BUFFER_LEN)))
-	{	
-		sf_write_double (streamFile, audio_data_input_copy, readcount) ;
+		//setup data for buffer
+	//std::vector<uint16_t> data;
+	//std::vector<uint16_t> read_buf(BUFFER_LEN);
+	size_t read_size = 0;
+	while((read_size = sf_read_double(inputFile, audio_data_input_copy.data(), audio_data_input_copy.size())) != 0)
+	{
+		audio_data_track_stream.insert(audio_data_track_stream.end(), audio_data_input_copy.begin(), audio_data_input_copy.begin() + read_size);
+		sf_write_double (streamFile, audio_data_input_copy.data(), read_size) ;
 	}
+	
+	double slen;
+	slen = audio_data_track_stream.size() * sizeof(uint16_t); //get size of data in bytes
+
+	std::cout << "Size of data in bytes: " << slen << "\n";
+	//if sample buffer is null or size of buffer data is zero, notify of error
+	if(slen == 0)
+	{
+		std::string messageString;
+		messageString.append("Failed to read audio from file.\n");
+		wxMessageBox( messageString );
+		return;
+	}
+	
+	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
+	std::cout << "Duration of sound:" << seconds << "s. \n";
+	
+	//save data from file into array audio_data
+	//int readcount;
+	//while ((readcount = sf_read_double (inputFile, audio_data_input_copy, BUFFER_LEN)))
+	//{	
+	//	sf_write_double (streamFile, audio_data_input_copy, readcount) ;
+	//}
 
 	/* Close input and stream files. */
 	sf_close(inputFile);
