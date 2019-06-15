@@ -5,14 +5,16 @@ but there was not free open-source code available that was easy to copy and impl
 
 This project aims to provide an easy-to-integrate timeline track editor that is not application specific.
 
-# Required Library
+##Audio track is an experimental feature that is not stable nor complete at the moment.
+
+# Required Libraries
 
 wxwidgets https://www.wxwidgets.org/
-
+libsndfile https://github.com/erikd/libsndfile/
 
 # How to Install
 
-1. Install the required library.
+1. Install the required libraries.
 2. Clone this repository
 3. cd timeline-track-editor
 4. mkdir build
@@ -103,13 +105,43 @@ Add a track by initializing it in the main frame of the application and then use
 		//makes DoubleTrack::FunctionToCallInNullState() be called when nothing is happening after stop button pressed
 		timeFrame->AddTrackFunctionToCallInTimerLoopNullState(track1); 
 
-		track1->Show(); //show the track
-		timeFrame->Show(true); //show the timeframe
+		//Initialize Audio Track
+
+		//Initialize OpenAL Soft
+		
+		audioPlayer = new OpenALSoftPlayer();
+		
+		if(!audioPlayer->InitOpenALSoft(audioDevice,alContext))
+		{
+			std::cout << "Unable to make audio track because OpenAL SOft could not be initialized! \n";
+		}
+		else
+		{
+			audioPlayer->SetReferenceToAudioContext(alContext);
+			audioPlayer->SetReferenceToAudioDevice(audioDevice);
+			
+			audioPlayer->InitBuffersForStreaming();
+			
+			AudioTrack* track2 = new AudioTrack("Audio");
+		
+			start = 0.0f; //lowest value
+			end = 1.0f; //highest value
+			numTicks = 11; //number of ticks between lowest value and highest value including zero
+			resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
+
+			//setup bounds for vertical axis
+			track2->SetupAxisForVariable(start,end,resolution,numTicks);
+			
+			//add track to time frame
+			timeFrame->AddTrack(track2,space);
+			
+			track2->Show();
+		}
 	}
 
 	
-For further customization use DoubleTrack class as a template to create a new class to handle specific class types.
+For further customization use DoubleTrack and/or AudioTrack class as a template to create a new class to handle specific class types.
 
-# To place points on graph 
+# To place points on graph in DoubleTrack
 Left click on graph in track to place a point in track. 
 Right Click on point in graph in track to remove a point from the graph.

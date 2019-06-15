@@ -147,7 +147,6 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	
 	
 //Show Tracks and Time Frame
-	track1->Show(); //show the track
 
 	timeFrame->Show(true); //show the timeframe
 		
