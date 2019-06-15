@@ -51,8 +51,6 @@ public:
     
     double GetCurrentTime();
     
-    void SetReferenceToVarToManipulate(double* thisVar);
-    
     virtual void FunctionToCallInPlayState();
     virtual void FunctionToCallInPauseState();
     virtual void FunctionToCallInRewindState();
@@ -96,7 +94,7 @@ private:
 	AudioStreamContainer audio_data_stream;
 	
 	//File handlers for input file and file to stream
-	SNDFILE *inputFile, *streamFile ;
+	SNDFILE *inputFile;
 	
 	std::string streamSoundFilePath;
 	

@@ -33,11 +33,29 @@ void AudioStreamContainer::CopyInputAudioDataToStream()
 	}
 }
 
-void AudioStreamContainer::WriteStreamContentsToFile()
+void AudioStreamContainer::WriteStreamContentsToFile(std::string filename, int format, int channels, int sample_rate,int buffer_length)
 {
-	size_t read_size = 0;
-	//while((read_size = sf_read_double(inputFile, audio_data_input_copy.data(), audio_data_input_copy.size())) != 0)
-	//{
-	//	sf_write_double (streamFile, audio_data_input_copy.data(), read_size) ;
-	//}
+	SF_INFO sfinfo;
+    sfinfo.channels = channels;
+    sfinfo.samplerate = sample_rate;
+    sfinfo.format = format;
+    
+    SNDFILE * outFile;
+    
+	// Open the stream file
+	if (! ( outFile = sf_open (filename.c_str(), SFM_WRITE, &sfinfo)))
+	{	
+		std::cout << "Not able to open stream file for writing" << outFile << std::endl;
+		puts (sf_strerror (NULL)) ;
+		return;
+	} 
+	
+	//write data
+	size_t readSize = stream_audio_data.size();
+	sf_count_t write_count = 0; 
+	size_t count_buffer = 0;
+	
+	write_count = sf_write_double(outFile, stream_audio_data.front(), readSize);
+	
+	sf_close(outFile);
 }

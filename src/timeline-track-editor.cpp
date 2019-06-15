@@ -128,8 +128,12 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		
 		audioPlayer->InitBuffersForStreaming();
 		
+		audioPlayer->InitSource(&source);
+		
 		AudioTrack* track2 = new AudioTrack("Audio");
-	
+		track2->SetReferenceToSourceToManipulate(&source);
+		track2->SetReferenceToAudioPlayer(audioPlayer);
+		
 		start = 0.0f; //lowest value
 		end = 1.0f; //highest value
 		numTicks = 11; //number of ticks between lowest value and highest value including zero

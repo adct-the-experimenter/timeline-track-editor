@@ -40,7 +40,7 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 	audioPlayerPtr = nullptr;
 	
 	m_audio_graph = nullptr;
-
+	
 }
 
 //Audio related functions
@@ -163,7 +163,7 @@ void AudioTrack::OnBrowse(wxCommandEvent& event)
 			AudioTrack::PlotStreamAudioDataToGraph();
 			
 			//open file to play during streaming
-			//audioDevicePtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
 			 
 		} 
 		
@@ -190,18 +190,10 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	}
 	std::cout << "Successfully loaded " << inputSoundFilePath << " saving data..." << std::endl;
 	
-	// Open the stream file
-	if (! ( streamFile = sf_open (streamSoundFilePath.c_str(), SFM_WRITE, &input_sfinfo)))
-	{	
-		std::cout << "Not able to open stream file for writing" << streamFile << std::endl;
-		puts (sf_strerror (NULL)) ;
-		return;
-	} 
-	
 	//read input data
-	std::vector<int16_t> read_buf(BUFFER_LEN);
+	std::vector<double> read_buf(BUFFER_LEN);
 	size_t read_size = 0;
-	while((read_size = sf_read_short(inputFile, read_buf.data(), read_buf.size())) != 0)
+	while( (read_size = sf_read_double(inputFile, read_buf.data(), read_buf.size()) ) != 0)
 	{
 		audio_data_input_copy.insert(audio_data_input_copy.end(), read_buf.begin(), read_buf.begin() + read_size);
 	}
@@ -229,10 +221,11 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	
 	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
 	std::cout << "Duration of sound:" << seconds << "s. \n";
+	
+	audio_data_stream.WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
 
 	/* Close input and stream files. */
 	sf_close(inputFile);
-	sf_close(streamFile);
 
 	//Plot current audio data in audio data track stream
 	AudioTrack::PlotStreamAudioDataToGraph();
@@ -328,6 +321,5 @@ wxString AudioTrack::GetTitle(){return Track::GetTitle();}
 
 double AudioTrack::GetCurrentTime(){return Track::GetCurrentTime();}
 
-void AudioTrack::SetReferenceToVarToManipulate(double* thisVar){}
 
 

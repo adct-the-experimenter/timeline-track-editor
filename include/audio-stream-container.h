@@ -3,6 +3,8 @@
 
 #include <sndfile.h>
 #include <vector>
+#include <string>
+#include <iostream>
 
 class AudioStreamContainer
 {
@@ -19,7 +21,7 @@ public:
 	
 	void CopyInputAudioDataToStream();
 	
-	void WriteStreamContentsToFile();
+	void WriteStreamContentsToFile(std::string filename, int format, int channels, int samplerate,int buffer_length);
 	
 private:
 	std::vector <double> *input_audio_data_ptr;

@@ -28,7 +28,7 @@
 
 OpenALSoftPlayer::OpenALSoftPlayer()
 {
-    
+    infile = nullptr;
 }
 
 OpenALSoftPlayer::~OpenALSoftPlayer()
