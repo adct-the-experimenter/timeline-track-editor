@@ -177,7 +177,8 @@ void AudioGraph::DrawCurrentDataOnGraph(wxDC& dc)
 		dc.DrawCircle( max_graph_points.at(i), 1 );
 		if(i != 0)
 		{
-			dc.DrawLine(max_graph_points.at(i-1),max_graph_points.at(i));
+			//draw line from previous point to next point
+			dc.DrawLine( max_graph_points.at(i-1), max_graph_points.at(i) );
 		}
 	}
 	
@@ -200,7 +201,7 @@ void AudioGraph::DrawHorizontalAxis(wxDC& dc)
             wxFONTWEIGHT_NORMAL, false, wxT("Courier 10 Pitch"));
 	dc.SetFont(font);
 	
-	int step = (int) round( TRACK_WIDTH / (TIME_TICK_NUM-1) );
+	int step = (int) round( int(TRACK_WIDTH) / (int(TIME_TICK_NUM)-1) );
 	int offset = TRACK_WIDTH / (TIME_TICK_NUM - 1);
 	
 	dc.SetPen(wxPen(wxColour(90, 80, 60)));

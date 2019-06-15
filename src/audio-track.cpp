@@ -144,26 +144,31 @@ void AudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 
 void AudioTrack::OnBrowse(wxCommandEvent& event)
 {
-	wxFileDialog fileDlg(this, _("Choose the WAV file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|All files|*.*"));
-	if (fileDlg.ShowModal() == wxID_OK)
+	if(audio_data_stream.GetSize() == 0)
 	{
-		wxString path = fileDlg.GetPath();
-		//use this path in your app
-		inputSoundFilePath = std::string(path.mb_str());
+		wxFileDialog fileDlg(this, _("Choose the WAV file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|All files|*.*"));
+		if (fileDlg.ShowModal() == wxID_OK)
+		{
+			wxString path = fileDlg.GetPath();
+			//use this path in your app
+			inputSoundFilePath = std::string(path.mb_str());
+			
+			std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
+			streamSoundFilePath = "../resources/stream.wav";
+			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
+			
+			//create a copy of file to reference for editing
+			AudioTrack::ReadAndCopyDataFromInputFile();
+			
+			AudioTrack::PlotStreamAudioDataToGraph();
+			
+			//open file to play during streaming
+			//audioDevicePtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			 
+		} 
 		
-		std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
-		streamSoundFilePath = "../resources/stream.wav";
-		std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
-		
-		//create a copy of file to reference for editing
-		AudioTrack::ReadAndCopyDataFromInputFile();
-		
-		AudioTrack::PlotStreamAudioDataToGraph();
-		
-		//open file to play during streaming
-		//audioDevicePtr->OpenPlayerFile(streamSoundFilePath.c_str());
-		 
-	}   
+	}
+	  
 }
 
 void AudioTrack::ReadAndCopyDataFromInputFile()
