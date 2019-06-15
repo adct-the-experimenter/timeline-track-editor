@@ -35,6 +35,7 @@ set(SOURCES
 			src/playback-controls.cpp
 			src/audio-track.cpp
 			src/audio-graph.cpp
+			src/audio-stream-container.cpp
 			src/openalsoft-player.cpp
 			src/double-track.cpp
 			src/editor-graph.cpp

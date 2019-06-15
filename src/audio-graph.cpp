@@ -30,13 +30,19 @@ int AudioGraph::GetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValu
 	
 }
 
+
+
 void AudioGraph::PlotAudioDataToGraph(std::vector <double> *audio_data, int sample_rate,
 										double& verticalStart, double& verticalEnd, double& verticalResolution)
 {
+	//determines when to stop checking for max and min values
 	double time_resolution = 0.5;
 	
 	//calculate number of samples in time_resolution seconds
 	int num_samples = time_resolution * sample_rate;
+	
+	//mulitplying factor to make data show up nicely in graph
+	double nice_display_factor = 0.1;
 	
 	//keep track of every time 0.1 seconds of audio passed
 	size_t count = 0;
@@ -61,10 +67,12 @@ void AudioGraph::PlotAudioDataToGraph(std::vector <double> *audio_data, int samp
 			
 			int xMinTime = (min_time_count / sample_rate) * ( double(TRACK_WIDTH) / (double(TIME_END_VALUE) - double(TIME_START_VALUE)) );
 			int yMinGain = min * ( (double(TRACK_HEIGHT)) / (verticalEnd - verticalStart) );
+			yMinGain = verticalResolution * round(yMinGain / verticalResolution) * nice_display_factor;
 			min_graph_points.push_back(wxPoint(xMinTime,yMinGain));
 			
 			int xMaxTime = (max_time_count / sample_rate_non_int) * ( double(TRACK_WIDTH) / (double(TIME_END_VALUE) - double(TIME_START_VALUE)) );
 			int yMaxGain = max * ( (double(TRACK_HEIGHT)) / (verticalEnd - verticalStart) );
+			yMaxGain = verticalResolution * round(yMaxGain / verticalResolution) * nice_display_factor;
 			max_graph_points.push_back(wxPoint(xMaxTime,yMaxGain));
 			
 			//reset min and max
@@ -91,21 +99,98 @@ void AudioGraph::PlotAudioDataToGraph(std::vector <double> *audio_data, int samp
 	}
 }
 
+void AudioGraph::PlotStreamAudioDataToGraph(AudioStreamContainer* audio_data,int sample_rate, double& verticalStart, double& verticalEnd, double& verticalResolution)
+{
+	double time_resolution = 0.1;
+	
+	//mulitplying factor to make data show up nicely in graph
+	double nice_display_factor = 0.1;
+	
+	//calculate number of samples in time_resolution seconds
+	int num_samples = time_resolution * sample_rate;
+	
+	//keep track of every time 0.1 seconds of audio passed
+	size_t count = 0;
+	
+	double min = 0.0f;
+	double max = 0.0f;
+	
+	double min_time_count = 0; //the sample at which minimum value occurs
+	double max_time_count = 0; //the sample at which maximum value occurs
+	
+	double sample_rate_non_int = double(sample_rate);
+	
+	//for every sample
+	for(size_t i=0; i < audio_data->GetSize(); i++)
+	{
+		//std::cout << "i:" << i << " value:" << audio_data->at(i);
+		
+		//at end of time_resolution seconds
+		if(count == num_samples)
+		{	
+			//push points for min and max into graph
+			
+			int xMinTime = (min_time_count / sample_rate) * ( double(TRACK_WIDTH) / (double(TIME_END_VALUE) - double(TIME_START_VALUE)) );
+			int yMinGain = min * ( (double(TRACK_HEIGHT)) / (verticalEnd - verticalStart) );
+			yMinGain = verticalResolution * round(yMinGain/verticalResolution) * nice_display_factor;
+			min_graph_points.push_back(wxPoint(xMinTime,yMinGain));
+			
+			int xMaxTime = (max_time_count / sample_rate_non_int) * ( double(TRACK_WIDTH) / (double(TIME_END_VALUE) - double(TIME_START_VALUE)) );
+			int yMaxGain = max * ( (double(TRACK_HEIGHT)) / (verticalEnd - verticalStart) );
+			yMaxGain = verticalResolution * round(yMaxGain/verticalResolution) * nice_display_factor;
+			max_graph_points.push_back(wxPoint(xMaxTime,yMaxGain));
+			
+			//reset min and max
+			min = 0;
+			max = 0;
+			
+			count = 0; //reset count
+		}
+		if(audio_data->GetPointerToDataAtThisSampleIndex(i) != nullptr)
+		{
+			if(*audio_data->GetPointerToDataAtThisSampleIndex(i) < min 
+			&& *audio_data->GetPointerToDataAtThisSampleIndex(i) >= -10)
+			{
+				min = *audio_data->GetPointerToDataAtThisSampleIndex(i); 
+				min_time_count = i;
+			}
+			
+			if(*audio_data->GetPointerToDataAtThisSampleIndex(i) > max 
+				&& *audio_data->GetPointerToDataAtThisSampleIndex(i) <= 10)
+			{
+				max = *audio_data->GetPointerToDataAtThisSampleIndex(i); 
+				max_time_count = i;
+			}
+		}
+		
+		//increment count
+		count++;
+	}
+}										
+
 void AudioGraph::DrawCurrentDataOnGraph(wxDC& dc)
 {
 	// draw black circles for max graph points
     dc.SetBrush(*wxBLACK_BRUSH);
     for(size_t i=0; i < max_graph_points.size(); i++)
     {
-		dc.DrawCircle( max_graph_points.at(i), 3 );
+		dc.DrawCircle( max_graph_points.at(i), 1 );
+		if(i != 0)
+		{
+			dc.DrawLine(max_graph_points.at(i-1),max_graph_points.at(i));
+		}
 	}
 	
 	//draw blue circles for min graph points
-	dc.SetBrush(*wxBLUE_BRUSH);
-    for(size_t i=0; i < min_graph_points.size(); i++)
-    {
-		dc.DrawCircle( min_graph_points.at(i), 3 );
-	}
+	//dc.SetBrush(*wxBLUE_BRUSH);
+    //for(size_t i=0; i < min_graph_points.size(); i++)
+    //{
+	//	dc.DrawCircle( min_graph_points.at(i), 1 );
+	//	if(i != 0)
+	//	{
+	//		dc.DrawLine(min_graph_points.at(i-1),min_graph_points.at(i));
+	//	}
+	//}
 	
 }
 

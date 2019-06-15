@@ -40,8 +40,7 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 	audioPlayerPtr = nullptr;
 	
 	m_audio_graph = nullptr;
-	
-	audio_data_input_copy.resize(BUFFER_LEN);
+
 }
 
 //Audio related functions
@@ -194,19 +193,25 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 		return;
 	} 
 	
-		//setup data for buffer
-	//std::vector<uint16_t> data;
-	//std::vector<uint16_t> read_buf(BUFFER_LEN);
+	//read input data
+	std::vector<int16_t> read_buf(BUFFER_LEN);
 	size_t read_size = 0;
-	while((read_size = sf_read_double(inputFile, audio_data_input_copy.data(), audio_data_input_copy.size())) != 0)
+	while((read_size = sf_read_short(inputFile, read_buf.data(), read_buf.size())) != 0)
 	{
-		audio_data_track_stream.insert(audio_data_track_stream.end(), audio_data_input_copy.begin(), audio_data_input_copy.begin() + read_size);
-		sf_write_double (streamFile, audio_data_input_copy.data(), read_size) ;
+		audio_data_input_copy.insert(audio_data_input_copy.end(), read_buf.begin(), read_buf.begin() + read_size);
+	}
+	
+	//copy input audio data references to audio data stream
+	audio_data_stream.ResizeAudioStream(audio_data_input_copy.size());
+	for(size_t i=0; i < audio_data_stream.GetSize(); i++)
+	{
+		audio_data_stream.SetPointerToDataAtThisSampleIndex(&audio_data_input_copy[i],i);
 	}
 	
 	double slen;
-	slen = audio_data_track_stream.size() * sizeof(uint16_t); //get size of data in bytes
-
+	//slen = audio_data_track_stream.size() * sizeof(uint16_t); //get size of data in bytes
+	slen = audio_data_stream.GetSize() * sizeof(uint16_t);
+	
 	std::cout << "Size of data in bytes: " << slen << "\n";
 	//if sample buffer is null or size of buffer data is zero, notify of error
 	if(slen == 0)
@@ -223,12 +228,7 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	/* Close input and stream files. */
 	sf_close(inputFile);
 	sf_close(streamFile);
-	
-	//copy array audio data input copy to audio data track stream
-	std::copy(&audio_data_input_copy[0], 
-		&audio_data_input_copy[sizeof(audio_data_input_copy)], 
-		back_inserter(audio_data_track_stream));
-		
+
 	//Plot current audio data in audio data track stream
 	AudioTrack::PlotStreamAudioDataToGraph();
 	
@@ -240,7 +240,7 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 
 void AudioTrack::PlotStreamAudioDataToGraph()
 {
-	m_audio_graph->PlotAudioDataToGraph(&audio_data_track_stream,input_sfinfo.samplerate,
+	m_audio_graph->PlotStreamAudioDataToGraph(&audio_data_stream,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);
 	Refresh();
 }

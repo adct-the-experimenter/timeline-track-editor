@@ -8,6 +8,8 @@
 
 #include <wx/dcbuffer.h>
 
+#include "audio-stream-container.h"
+
 //Class used to only plot audio waveforms
 
 class AudioGraph : public wxPanel
@@ -28,8 +30,9 @@ public:
 	//if no value is at that time, then legitValue is false and 0 is returned
 	int GetVerticalGraphValueAtThisTime(double& thisTime,bool& legitValue);
 	
-	void PlotAudioDataToGraph(std::vector <double> *audio_data, int sample_rate,
-										double& verticalStart, double& verticalEnd, double& verticalResolution);
+	void PlotStreamAudioDataToGraph(AudioStreamContainer* audio_data,int sample_rate, double& verticalStart, double& verticalEnd, double& verticalResolution);
+	
+	void PlotAudioDataToGraph(std::vector <double> *audio_data, int sample_rate, double& verticalStart, double& verticalEnd, double& verticalResolution);
 	
 private:
 

@@ -10,6 +10,8 @@
 
 #include <functional>   // std::function, std::negate
 
+#include "audio-stream-container.h"
+
 #define	BUFFER_LEN	1024
 
 #define	MAX_CHANNELS	2
@@ -88,11 +90,10 @@ private:
     std::string inputSoundFilePath;
 	
 	//array to hold copy of audio data input
-	//double audio_data_input_copy [BUFFER_LEN]; 
 	std::vector<double> audio_data_input_copy;
 	
-	//vector to contain audio track data for streaming
-	std::vector <double> audio_data_track_stream;
+	//Container for data in audio stream
+	AudioStreamContainer audio_data_stream;
 	
 	//File handlers for input file and file to stream
 	SNDFILE *inputFile, *streamFile ;
