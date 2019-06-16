@@ -27,6 +27,9 @@ public:
 //Audio related functions
 	void SetReferenceToSourceToManipulate(ALuint* thisSource);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
+	
+	void SetReferenceToAudioDataStream(AudioStreamContainer* thisContainer);
+	AudioStreamContainer* GetReferenceToAudioStream();
     
 //Track related Functions
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
@@ -75,6 +78,7 @@ public:
     int GetAudioTrackState();
     
     void PlotStreamAudioDataToGraph();
+    void ReadAndCopyDataFromInputFile(std::string inputSoundFilePath, std::string streamSoundFilePath);
     
 private:
 	
@@ -89,23 +93,17 @@ private:
 	//pointer to audio player to use
 	OpenALSoftPlayer* audioPlayerPtr;
 	
-    std::string inputSoundFilePath;
-	
 	//array to hold copy of audio data input
 	std::vector<double> audio_data_input_copy;
 	
 	//Container for data in audio stream
-	AudioStreamContainer audio_data_stream;
+	AudioStreamContainer* audio_data_stream_ptr;
 	
 	//File handlers for input file and file to stream
 	SNDFILE *inputFile;
 	
-	std::string streamSoundFilePath;
-	
 	//holds information on audio data 
 	SF_INFO input_sfinfo;
-	
-	void ReadAndCopyDataFromInputFile();
 	
 	//GUI
 	
@@ -124,9 +122,6 @@ private:
     std::unordered_map <double, double> map_time_output;
     
     std::function < void() > func_after_var_change;
-    
-    wxButton* browseButton;
-    void OnBrowse(wxCommandEvent& event);
 };
 
 #endif

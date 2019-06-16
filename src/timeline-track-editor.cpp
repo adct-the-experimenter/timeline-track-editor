@@ -90,12 +90,13 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		
 		audioPlayer->InitSource(&source);
 		
-		AudioTrack* track2 = new AudioTrack("Audio");
+		StereoAudioTrack* track2 = new StereoAudioTrack("Audio");
 		track2->SetReferenceToSourceToManipulate(&source);
 		track2->SetReferenceToAudioPlayer(audioPlayer);
+		track2->InitTrack(timeFrame->GetTimelineWindow(),nullptr);
 		
 		double start = 0.0f; //lowest value
-		double end = 1.0f; //highest value
+		double end = 10.0f; //highest value
 		int numTicks = 11; //number of ticks between lowest value and highest value including zero
 		double resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
 
@@ -104,7 +105,8 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		
 		int space = 20;
 		//add track to time frame
-		timeFrame->AddTrack(track2,space);
+		timeFrame->AddTrack(track2->GetReferenceToLeftChannelTrack(),space);
+		timeFrame->AddTrack(track2->GetReferenceToRightChannelTrack(),space);
 		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);
 		track2->Show();
 	}

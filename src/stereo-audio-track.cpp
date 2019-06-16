@@ -5,16 +5,47 @@ StereoAudioTrack::StereoAudioTrack(const wxString& title) : Track(title)
 	sourceToManipulatePtr = nullptr;
 	audioPlayerPtr = nullptr;
 	
-	m_audio_graph = nullptr;
+	//initialize audio tracks
+	m_left_channel_track = new AudioTrack("Left Channel");
+	m_right_channel_track = new AudioTrack("Right Channel");
+	m_left_channel_track->SetReferenceToAudioDataStream(&audio_data_stream);
+	m_right_channel_track->SetReferenceToAudioDataStream(&audio_data_stream);
+	
+	Connect(wxEVT_PAINT, wxPaintEventHandler(StereoAudioTrack::OnPaint));
+	Connect(wxEVT_SIZE, wxSizeEventHandler(StereoAudioTrack::OnSize));
+	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(StereoAudioTrack::OnLeftMouseClick));
+	Connect(wxEVT_CONTEXT_MENU, wxCommandEventHandler(StereoAudioTrack::OnRightMouseClick));
+	
+	inputSoundFilePath = "";
+	streamSoundFilePath = "../resources/stream.wav";
+	
 }
+
+void StereoAudioTrack::SetReferenceToSourceToManipulate(ALuint* source){sourceToManipulatePtr = source;}
+void StereoAudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
+
+AudioTrack* StereoAudioTrack::GetReferenceToLeftChannelTrack(){return m_left_channel_track;}
+AudioTrack* StereoAudioTrack::GetReferenceToRightChannelTrack(){return m_right_channel_track;}
 
 //Track related functions
 
-void FunctionToCallInPlayState(){}
-void FunctionToCallInPauseState(){}
-void FunctionToCallInRewindState(){}
-void FunctionToCallInFastForwardState(){}
-void FunctionToCallInNullState(){}
+void StereoAudioTrack::FunctionToCallInPlayState()
+{
+	if(m_left_channel_track != nullptr)
+	{
+		m_left_channel_track->FunctionToCallInPlayState();
+	}
+	
+	if(m_right_channel_track != nullptr)
+	{
+		m_right_channel_track->FunctionToCallInPlayState();
+	}
+}
+
+void StereoAudioTrack::FunctionToCallInPauseState(){}
+void StereoAudioTrack::FunctionToCallInRewindState(){}
+void StereoAudioTrack::FunctionToCallInFastForwardState(){}
+void StereoAudioTrack::FunctionToCallInNullState(){}
     
 void StereoAudioTrack::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){Track::SetReferenceToCurrentTimeVariable(thisTimeVariable);}
 void StereoAudioTrack::SetReferenceToTimeTickVector(std::vector <int> *thisVector){Track::SetReferenceToTimeTickVector(thisVector);}
@@ -26,15 +57,61 @@ wxString StereoAudioTrack::GetTitle(){return Track::GetTitle();}
 
 void StereoAudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
+	
+	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,20), wxSize(70, 30) );
+	browseButton->Bind(wxEVT_BUTTON, &StereoAudioTrack::OnBrowse,this);
+	
 	Track::SetReferenceToTimeTickVector(timeTickVector);
-	
-	m_left_channel_track = new AudioTrack("Left Channel");
-	m_right_channel_track = new AudioTrack("Right Channel");
-	
-	m_left_channel_track->InitTrack(parent,timeTickVector);
-	m_right_channel_track->InitTrack(parent,timeTickVector);
 }
 
+//function to set bounds for variable to change as well as number of ticks to draw
+void StereoAudioTrack::SetupAxisForVariable(double& start, double& end, double& resolution, int& numTick)
+{
+	verticalStart = start;
+	verticalEnd = end;
+	verticalNumTicks = numTick;
+	verticalResolution = resolution;
+	
+	
+	//setup tick marks
+	if(m_left_channel_track != nullptr && m_right_channel_track != nullptr)
+	{
+		m_left_channel_track->SetupAxisForVariable(verticalStart,verticalEnd,verticalResolution,verticalNumTicks);
+		m_right_channel_track->SetupAxisForVariable(verticalStart,verticalEnd,verticalResolution,verticalNumTicks);
+	}
+	
+}
+
+void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
+{
+	if(audio_data_stream.GetSize() == 0)
+	{
+		wxFileDialog fileDlg(this, _("Choose the WAV file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|All files|*.*"));
+		if (fileDlg.ShowModal() == wxID_OK)
+		{
+			wxString path = fileDlg.GetPath();
+			//use this path in your app
+			inputSoundFilePath = std::string(path.mb_str());
+			
+			std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
+			
+			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
+			
+			//create a copy of file to reference for editing
+			//m_left_channel_track->ReadAndCopyDataFromInputFile(inputSoundFilePath,streamSoundFilePath);
+			//m_right_channel_track->ReadAndCopyDataFromInputFile(inputSoundFilePath,streamSoundFilePath);
+			
+			//m_left_channel_track->PlotStreamAudioDataToGraph();
+			//m_right_channel_track->PlotStreamAudioDataToGraph();
+			
+			//open file to play during streaming
+			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			 
+		} 
+	}
+	  
+}
+	
 void StereoAudioTrack::OnSize(wxSizeEvent& event)
 {
 	Refresh();
@@ -54,8 +131,29 @@ void StereoAudioTrack::OnScroll(wxScrollEvent& event)
 void StereoAudioTrack::OnPaint(wxPaintEvent& event)
 {
 	//std::cout << "Current Time in Track:" << *current_time_pos_pointer << std::endl;
+	wxPaintDC dc(this);
+	
+	StereoAudioTrack::render(dc);
+}
+
+void StereoAudioTrack::OnLeftMouseClick(wxMouseEvent& event)
+{
+	
+}
+
+void StereoAudioTrack::OnRightMouseClick(wxCommandEvent& event)
+{
 	
 }
 
 double StereoAudioTrack::GetCurrentTime(){return Track::GetCurrentTime();}
+
+void StereoAudioTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction)
+{
+	func_after_var_change = thisFunction;
+} 
+    
+void StereoAudioTrack::render(wxDC& dc){}
+void StereoAudioTrack::logic_left_click(){}
+void StereoAudioTrack::logic_right_click(){}
 

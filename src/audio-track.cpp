@@ -35,11 +35,13 @@
 
 AudioTrack::AudioTrack(const wxString& title) : Track(title)
 {
-	state = PLAYER_NULL;
+	track_state = PLAYER_NULL;
 	sourceToManipulatePtr = nullptr;
 	audioPlayerPtr = nullptr;
 	
 	m_audio_graph = nullptr;
+	
+	audio_data_stream_ptr = nullptr;
 }
 
 //Audio related functions
@@ -47,6 +49,10 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 void AudioTrack::SetReferenceToSourceToManipulate(ALuint* thisSource){sourceToManipulatePtr = thisSource;}
 
 void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
+
+void AudioTrack::SetReferenceToAudioDataStream(AudioStreamContainer* thisContainer){audio_data_stream_ptr = thisContainer;}
+AudioStreamContainer* AudioTrack::GetReferenceToAudioStream(){return audio_data_stream_ptr;}
+
 
 //Track related functions
 
@@ -136,45 +142,13 @@ void AudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 	this->SetBackgroundColour( *wxLIGHT_GREY );
 	AudioTrack::SetReferenceToTimeTickVector(timeTickVector);
 	
-	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,100), wxSize(70, 30) );
-	browseButton->Bind(wxEVT_BUTTON, &AudioTrack::OnBrowse,this);
-	
 	//initialize audio graph for left channel
 	m_audio_graph = new AudioGraph(this);
 	m_audio_graph->SetReferenceToTimeTickVector(timeTickVector);
 	
 }
 
-void AudioTrack::OnBrowse(wxCommandEvent& event)
-{
-	if(audio_data_stream.GetSize() == 0)
-	{
-		wxFileDialog fileDlg(this, _("Choose the WAV file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|All files|*.*"));
-		if (fileDlg.ShowModal() == wxID_OK)
-		{
-			wxString path = fileDlg.GetPath();
-			//use this path in your app
-			inputSoundFilePath = std::string(path.mb_str());
-			
-			std::cout << "Input Sound file path:" << inputSoundFilePath << std::endl;
-			streamSoundFilePath = "../resources/stream.wav";
-			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
-			
-			//create a copy of file to reference for editing
-			AudioTrack::ReadAndCopyDataFromInputFile();
-			
-			AudioTrack::PlotStreamAudioDataToGraph();
-			
-			//open file to play during streaming
-			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
-			 
-		} 
-		
-	}
-	  
-}
-
-void AudioTrack::ReadAndCopyDataFromInputFile()
+void AudioTrack::ReadAndCopyDataFromInputFile(std::string inputSoundFilePath, std::string streamSoundFilePath)
 {
 	//Read data from file
 	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
@@ -202,15 +176,15 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	}
 	
 	//copy input audio data references to audio data stream
-	audio_data_stream.ResizeAudioStream(audio_data_input_copy.size());
-	for(size_t i=0; i < audio_data_stream.GetSize(); i++)
+	audio_data_stream_ptr->ResizeAudioStream(audio_data_input_copy.size());
+	for(size_t i=0; i < audio_data_stream_ptr->GetSize(); i++)
 	{
-		audio_data_stream.SetPointerToDataAtThisSampleIndex(&audio_data_input_copy[i],i);
+		audio_data_stream_ptr->SetPointerToDataAtThisSampleIndex(&audio_data_input_copy[i],i);
 	}
 	
 	double slen;
 	//slen = audio_data_track_stream.size() * sizeof(uint16_t); //get size of data in bytes
-	slen = audio_data_stream.GetSize() * sizeof(uint16_t);
+	slen = audio_data_stream_ptr->GetSize() * sizeof(uint16_t);
 	
 	std::cout << "Size of data in bytes: " << slen << "\n";
 	//if sample buffer is null or size of buffer data is zero, notify of error
@@ -225,13 +199,10 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
 	std::cout << "Duration of sound:" << seconds << "s. \n";
 	
-	audio_data_stream.WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
+	audio_data_stream_ptr->WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
 
 	/* Close input and stream files. */
 	sf_close(inputFile);
-
-	//Plot current audio data in audio data track stream
-	AudioTrack::PlotStreamAudioDataToGraph();
 	
 	std::string messageString;
 	messageString.append("Successfully loaded and saved a copy of audio data of");
@@ -241,7 +212,7 @@ void AudioTrack::ReadAndCopyDataFromInputFile()
 
 void AudioTrack::PlotStreamAudioDataToGraph()
 {
-	m_audio_graph->PlotStreamAudioDataToGraph(&audio_data_stream,input_sfinfo.samplerate,
+	m_audio_graph->PlotStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);
 	Refresh();
 }
