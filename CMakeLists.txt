@@ -33,6 +33,7 @@ set(SOURCES
 			src/timeline-frame.cpp
 			src/timeline-window.cpp
 			src/playback-controls.cpp
+			src/stereo-audio-track.cpp
 			src/audio-track.cpp
 			src/audio-graph.cpp
 			src/audio-stream-container.cpp

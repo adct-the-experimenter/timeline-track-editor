@@ -104,7 +104,7 @@ void AudioGraph::PlotStreamAudioDataToGraph(AudioStreamContainer* audio_data,int
 	double time_resolution = 0.1;
 	
 	//mulitplying factor to make data show up nicely in graph
-	double nice_display_factor = 0.1;
+	double nice_display_factor = 1;
 	
 	//calculate number of samples in time_resolution seconds
 	int num_samples = time_resolution * sample_rate;
@@ -149,14 +149,14 @@ void AudioGraph::PlotStreamAudioDataToGraph(AudioStreamContainer* audio_data,int
 		if(audio_data->GetPointerToDataAtThisSampleIndex(i) != nullptr)
 		{
 			if(*audio_data->GetPointerToDataAtThisSampleIndex(i) < min 
-			&& *audio_data->GetPointerToDataAtThisSampleIndex(i) >= -10)
+			&& *audio_data->GetPointerToDataAtThisSampleIndex(i) >= -1)
 			{
 				min = *audio_data->GetPointerToDataAtThisSampleIndex(i); 
 				min_time_count = i;
 			}
 			
 			if(*audio_data->GetPointerToDataAtThisSampleIndex(i) > max 
-				&& *audio_data->GetPointerToDataAtThisSampleIndex(i) <= 10)
+				&& *audio_data->GetPointerToDataAtThisSampleIndex(i) <= 1)
 			{
 				max = *audio_data->GetPointerToDataAtThisSampleIndex(i); 
 				max_time_count = i;

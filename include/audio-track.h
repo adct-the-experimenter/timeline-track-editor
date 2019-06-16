@@ -70,14 +70,18 @@ public:
 		PLAYER_PAUSED,
 		PLAYER_REWINDING
 	};
+	
+	void SetAudioTrackState(int thisState);
+    int GetAudioTrackState();
     
     void PlotStreamAudioDataToGraph();
+    
 private:
 	
 	//Audio Processes and Operations
 	
 	//state of audio track
-	int state;
+	int track_state;
 
 	//source to manipulate
 	ALuint* sourceToManipulatePtr;

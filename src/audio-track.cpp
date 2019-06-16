@@ -40,7 +40,6 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 	audioPlayerPtr = nullptr;
 	
 	m_audio_graph = nullptr;
-	
 }
 
 //Audio related functions
@@ -63,12 +62,12 @@ void AudioTrack::FunctionToCallInPlayState()
 {
 	if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
 	{
-		switch(state)
+		switch(AudioTrack::GetAudioTrackState())
 		{
 			case PLAYER_NULL:
 			{
 				audioPlayerPtr->StartPlayer(sourceToManipulatePtr); //start player
-				state = PLAYER_PLAYING; //switch to player started state
+				AudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player started state
 				break;
 			}
 			case PLAYER_PLAYING:
@@ -84,12 +83,12 @@ void AudioTrack::FunctionToCallInPlayState()
 
 void AudioTrack::FunctionToCallInPauseState()
 {
-	if(state != PLAYER_PAUSED)
+	if(AudioTrack::GetAudioTrackState() != PLAYER_PAUSED)
 	{
 		if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
 		{
 			audioPlayerPtr->PauseSource(sourceToManipulatePtr);
-			state = PLAYER_PAUSED;
+			AudioTrack::SetAudioTrackState(PLAYER_PAUSED);
 		}	
 	}
 }
@@ -99,7 +98,7 @@ void AudioTrack::FunctionToCallInRewindState()
 	if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
 	{
 		alSourceRewind(*sourceToManipulatePtr);
-		state = PLAYER_REWINDING;
+		AudioTrack::SetAudioTrackState(PLAYER_REWINDING);
 	}
 }
 
@@ -132,14 +131,18 @@ void AudioTrack::logic_right_click()
 
 void AudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
-	Track::InitTrack(parent,timeTickVector);
-
-	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,350), wxSize(70, 30) );
+	
+	this->Create(parent, wxID_ANY, wxPoint(wxDefaultPosition.x,wxDefaultPosition.y + 50), wxSize(TRACK_WIDTH, TRACK_HEIGHT),wxTAB_TRAVERSAL,AudioTrack::GetTitle());
+	this->SetBackgroundColour( *wxLIGHT_GREY );
+	AudioTrack::SetReferenceToTimeTickVector(timeTickVector);
+	
+	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,100), wxSize(70, 30) );
 	browseButton->Bind(wxEVT_BUTTON, &AudioTrack::OnBrowse,this);
 	
-	//initialize audio graph
+	//initialize audio graph for left channel
 	m_audio_graph = new AudioGraph(this);
 	m_audio_graph->SetReferenceToTimeTickVector(timeTickVector);
+	
 }
 
 void AudioTrack::OnBrowse(wxCommandEvent& event)
@@ -321,5 +324,6 @@ wxString AudioTrack::GetTitle(){return Track::GetTitle();}
 
 double AudioTrack::GetCurrentTime(){return Track::GetCurrentTime();}
 
-
+void AudioTrack::SetAudioTrackState(int thisState){track_state = thisState;}
+int AudioTrack::GetAudioTrackState(){return track_state;}
 

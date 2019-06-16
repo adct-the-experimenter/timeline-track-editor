@@ -132,6 +132,8 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 		std::cout << error << std::endl;
 		return 0;
 	 }
+	 
+	 std::cout << "File opened successfully for streaming.\n";
 
     /* Get the stream format, and figure out the OpenAL format */
     
@@ -184,11 +186,11 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	
     sample_rate = sfinfo.samplerate;
 	
-	//frame size is number of channels * audio bit size divided by 8
-	frame_size = sfinfo.channels * (sfinfo.format & 0xFF) / 8;
+	//frame size is number of channels * audio bit size
+	frame_size = sfinfo.channels * (sfinfo.format & 0xFF);
 
     /* Set the buffer size, given the desired millisecond length. */
-    buffer_size = (uint64_t)sample_rate * BUFFER_TIME_MS/1000 * frame_size;
+    buffer_size = (uint64_t)sample_rate * double(BUFFER_TIME_MS)/1000 * frame_size;
     
     return 1;
 }
@@ -220,10 +222,10 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     for(i = 0;i < NUM_BUFFERS;i++)
     {
          //setup data for buffer
-		std::vector<uint16_t> data;
-		std::vector<int16_t> read_buf(buffer_size);
+		std::vector<double> data;
+		std::vector<double> read_buf(buffer_size);
 		size_t read_size = 0;
-		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
+		while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
 		{
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}
@@ -277,7 +279,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
     
     if(alGetError() != AL_NO_ERROR)
     {
-        fprintf(stderr, "Error checking source state\n");
+        fprintf(stderr, "Error checking source state.\n");
         return 0;
     }
 
@@ -294,10 +296,10 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
          * back on the source */
          
          //setup data for buffer
-		std::vector<uint16_t> data;
-		std::vector<int16_t> read_buf(buffer_size);
+		std::vector<double> data;
+		std::vector<double> read_buf(buffer_size);
 		size_t read_size = 0;
-		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
+		while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
 		{
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}

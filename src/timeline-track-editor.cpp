@@ -71,46 +71,6 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
     
     TimelineFrame *timeFrame = new TimelineFrame(this); 
 
-//Initialize Double Track
-    
-    int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
-
-    
-	DoubleTrack* track1 = new DoubleTrack("Variable");
-	
-	double start = -10.0f; //lowest value
-	double end = 10.0f; //highest value
-	int numTicks = 11; //number of ticks between lowest value and highest value including zero
-	double resolution = 1; //the fineness of how much variable can be incremented/decremented by
-	
-	//setup bounds for vertical axis
-	track1->SetupAxisForVariable(start,end,resolution,numTicks); 
-	
-	//Put in the variable to change with the timeline.
-	// IMPORTANT NOTE: someVarToChange must be declared outside of scope of MyFrame constructor 
-	//and not go out of scope or else a segmentation fault happens
-	track1->SetReferenceToVarToManipulate(&someVarToChange); 
-	
-	//set function to call after variable to manipulate has changed
-	//optional
-	track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);
-	
-	//add block of space between timeline and track
-	int spaceBlockSize = 100;
-	timeFrame->AddSpacerBlock(spaceBlockSize);
-	
-	//add text to the timeline window before track to indicate what variable the track manipulates
-	wxBoxSizer* hboxText = new wxBoxSizer(wxHORIZONTAL);
-	wxStaticText *text = new wxStaticText(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Track for someVarToChange"),wxDefaultPosition );
-	hboxText->Add(text);
-	timeFrame->AddBoxSizer(hboxText);
-	
-	//add track to time frame
-	timeFrame->AddTrack(track1,space);
-	//add function to call during playback to timeframe 
-	//so that someVarToChange can be changed according to Track FunctionToCallEveryTimeInTimerLoop
-	timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track1);
-	
 //Initialize Audio Track
 
 	//Initialize OpenAL Soft
@@ -134,17 +94,18 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		track2->SetReferenceToSourceToManipulate(&source);
 		track2->SetReferenceToAudioPlayer(audioPlayer);
 		
-		start = 0.0f; //lowest value
-		end = 1.0f; //highest value
-		numTicks = 11; //number of ticks between lowest value and highest value including zero
-		resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
+		double start = 0.0f; //lowest value
+		double end = 1.0f; //highest value
+		int numTicks = 11; //number of ticks between lowest value and highest value including zero
+		double resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
 
 		//setup bounds for vertical axis
 		track2->SetupAxisForVariable(start,end,resolution,numTicks);
 		
+		int space = 20;
 		//add track to time frame
 		timeFrame->AddTrack(track2,space);
-		
+		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);
 		track2->Show();
 	}
 	
