@@ -8,8 +8,6 @@ StereoAudioTrack::StereoAudioTrack(const wxString& title) : Track(title)
 	//initialize audio tracks
 	m_left_channel_track = new AudioTrack("Left Channel");
 	m_right_channel_track = new AudioTrack("Right Channel");
-	m_left_channel_track->SetReferenceToAudioDataStream(&audio_data_stream);
-	m_right_channel_track->SetReferenceToAudioDataStream(&audio_data_stream);
 	
 	Connect(wxEVT_PAINT, wxPaintEventHandler(StereoAudioTrack::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(StereoAudioTrack::OnSize));
@@ -97,15 +95,29 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 			
 			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 			
+			int channels = m_left_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath);
+			std::cout << "channels:" << channels << std::endl;
 			//create a copy of file to reference for editing
-			//m_left_channel_track->ReadAndCopyDataFromInputFile(inputSoundFilePath,streamSoundFilePath);
-			//m_right_channel_track->ReadAndCopyDataFromInputFile(inputSoundFilePath,streamSoundFilePath);
+			//also put data into stream
+			m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath);
+			m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath);
 			
-			//m_left_channel_track->PlotStreamAudioDataToGraph();
-			//m_right_channel_track->PlotStreamAudioDataToGraph();
+			if(channels == 1)
+			{
+				//graph all data in channel to one graph
+				m_left_channel_track->PlotOneChannelStreamAudioDataToGraph(&audio_data_stream);
+			}
+			else if(channels == 2)
+			{	
+				//plot left channel data to one graph 
+				m_left_channel_track->PlotLeftChannelStreamAudioDataToGraph(&audio_data_stream);
+				//plot right channel data to other graph
+				m_right_channel_track->PlotRightChannelStreamAudioDataToGraph(&audio_data_stream);
+				
+			}
 			
 			//open file to play during streaming
-			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			//audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
 			 
 		} 
 	}
@@ -153,7 +165,12 @@ void StereoAudioTrack::SetFunctionToCallAfterVariableChange(std::function < void
 	func_after_var_change = thisFunction;
 } 
     
-void StereoAudioTrack::render(wxDC& dc){}
+void StereoAudioTrack::render(wxDC& dc)
+{
+	m_left_channel_track->render(dc);
+	m_right_channel_track->render(dc);
+}
+
 void StereoAudioTrack::logic_left_click(){}
 void StereoAudioTrack::logic_right_click(){}
 

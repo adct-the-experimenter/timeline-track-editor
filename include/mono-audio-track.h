@@ -1,19 +1,18 @@
-#ifndef STEREOAUDIOTRACK_H
-#define STEREOAUDIOTRACK_H
+#ifndef MONOAUDIOTRACK_H
+#define MONOAUDIOTRACK_H
 
 #include "track.h"
 #include "audio-track.h"
 
-class StereoAudioTrack : public Track
+class MonoAudioTrack : public Track
 {
 public:
-	StereoAudioTrack(const wxString& title);
+	MonoAudioTrack(const wxString& title);
 	
 	void SetReferenceToSourceToManipulate(ALuint* source);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
 	
-	AudioTrack* GetReferenceToLeftChannelTrack();
-	AudioTrack* GetReferenceToRightChannelTrack();
+	AudioTrack* GetReferenceToChannelTrack();
 	
 	//Audio Track related functions
 	
@@ -58,11 +57,7 @@ private:
 	//object to hold audio data for streaming
 	AudioStreamContainer audio_data_stream;
 	
-	//Hold data for left channel and right channel
-	std::vector <double> audio_data_input_copy;
-	
-	AudioTrack* m_left_channel_track;
-	AudioTrack* m_right_channel_track;
+	AudioTrack* m_channel_track;
 	
 	ALuint* sourceToManipulatePtr;
 	OpenALSoftPlayer* audioPlayerPtr;

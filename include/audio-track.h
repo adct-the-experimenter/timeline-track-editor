@@ -28,8 +28,16 @@ public:
 	void SetReferenceToSourceToManipulate(ALuint* thisSource);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
 	
-	void SetReferenceToAudioDataStream(AudioStreamContainer* thisContainer);
-	AudioStreamContainer* GetReferenceToAudioStream();
+	int GetNumberOfChannelsInAudioFile(std::string path);
+    
+    
+    void ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath);
+    
+    void CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath);
+    
+    void PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
+    void PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
+    void PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
     
 //Track related Functions
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
@@ -77,9 +85,6 @@ public:
 	void SetAudioTrackState(int thisState);
     int GetAudioTrackState();
     
-    void PlotStreamAudioDataToGraph();
-    void ReadAndCopyDataFromInputFile(std::string inputSoundFilePath, std::string streamSoundFilePath);
-    
 private:
 	
 	//Audio Processes and Operations
@@ -94,10 +99,10 @@ private:
 	OpenALSoftPlayer* audioPlayerPtr;
 	
 	//array to hold copy of audio data input
-	std::vector<double> audio_data_input_copy;
+	
 	
 	//Container for data in audio stream
-	AudioStreamContainer* audio_data_stream_ptr;
+	
 	
 	//File handlers for input file and file to stream
 	SNDFILE *inputFile;
@@ -117,9 +122,6 @@ private:
 	int verticalNumTicks; //number of tick marks in vertical axis
     
     AudioGraph* m_audio_graph;
-    
-    //2d map to hold output at certain time, for quick reading
-    std::unordered_map <double, double> map_time_output;
     
     std::function < void() > func_after_var_change;
 };

@@ -41,7 +41,6 @@ AudioTrack::AudioTrack(const wxString& title) : Track(title)
 	
 	m_audio_graph = nullptr;
 	
-	audio_data_stream_ptr = nullptr;
 }
 
 //Audio related functions
@@ -50,9 +49,116 @@ void AudioTrack::SetReferenceToSourceToManipulate(ALuint* thisSource){sourceToMa
 
 void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
 
-void AudioTrack::SetReferenceToAudioDataStream(AudioStreamContainer* thisContainer){audio_data_stream_ptr = thisContainer;}
-AudioStreamContainer* AudioTrack::GetReferenceToAudioStream(){return audio_data_stream_ptr;}
 
+int AudioTrack::GetNumberOfChannelsInAudioFile(std::string filepath)
+{
+	int channels = 0;
+	
+	//Read data from file
+	if (! (inputFile = sf_open (filepath.c_str(), SFM_READ, &input_sfinfo)))
+	{	
+		// Open failed, so print an error message.
+		std::cout << "Not able to open input file " <<  filepath << std::endl;
+		/* Print the error message from libsndfile. */
+		puts (sf_strerror (NULL)) ;
+		return 0;
+	} 
+	
+	channels = input_sfinfo.channels;
+	
+	/* Close input file. */
+	sf_close(inputFile);
+	
+	return channels;
+}
+
+void AudioTrack::ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath)
+{
+	//Read data from file
+	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
+	{	
+		// Open failed, so print an error message.
+		std::cout << "Not able to open input file " <<  inputSoundFilePath << std::endl;
+		/* Print the error message from libsndfile. */
+		puts (sf_strerror (NULL)) ;
+		return;
+	} 
+		
+	if (input_sfinfo.channels > MAX_CHANNELS)
+	{
+		std::cout << "Not able to process more than" <<  MAX_CHANNELS << "channels.\n";
+		return;
+	}
+	std::cout << "Successfully loaded " << inputSoundFilePath << " saving data..." << std::endl;
+	
+	//read input data
+	std::vector<double> read_buf(BUFFER_LEN);
+	size_t read_size = 0;
+	
+	
+	while( (read_size = sf_read_double(inputFile, read_buf.data(), read_buf.size()) ) != 0)
+	{
+		audio_data_input_copy_ptr->insert(audio_data_input_copy_ptr->end(), read_buf.begin(), read_buf.begin() + read_size);
+	}
+	
+	/* Close input and stream files. */
+	sf_close(inputFile);
+	
+	std::string messageString;
+	messageString.append("Successfully loaded and saved a copy of audio data of");
+	messageString.append(inputSoundFilePath);
+	wxMessageBox( messageString );
+}
+
+void AudioTrack::CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath)
+{
+	//copy input audio data references to audio data stream
+	audio_data_stream_ptr->ResizeAudioStream(audio_data_input_copy_ptr->size());
+	for(size_t i=0; i < audio_data_stream_ptr->GetSize(); i++)
+	{
+		double* ref_at_i = &(audio_data_input_copy_ptr->at(i));
+		audio_data_stream_ptr->SetPointerToDataAtThisSampleIndex(ref_at_i,i);
+	}
+	
+	double slen;
+	slen = audio_data_stream_ptr->GetSize() * sizeof(uint16_t);
+	
+	std::cout << "Size of data in bytes: " << slen << "\n";
+	//if sample buffer is null or size of buffer data is zero, notify of error
+	if(slen == 0)
+	{
+		std::string messageString;
+		messageString.append("Failed to read audio from file.\n");
+		wxMessageBox( messageString );
+		return;
+	}
+	
+	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
+	std::cout << "Duration of sound:" << seconds << "s. \n";
+	
+	audio_data_stream_ptr->WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
+}
+
+void AudioTrack::PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+{
+	m_audio_graph->PlotOneChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
+										verticalStart, verticalEnd, verticalResolution);
+	Refresh();
+}
+
+void AudioTrack::PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+{
+	m_audio_graph->PlotLeftChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
+										verticalStart, verticalEnd, verticalResolution);
+	Refresh();
+}
+
+void AudioTrack::PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+{
+	m_audio_graph->PlotRightChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
+										verticalStart, verticalEnd, verticalResolution);
+	Refresh();
+}
 
 //Track related functions
 
@@ -146,75 +252,6 @@ void AudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 	m_audio_graph = new AudioGraph(this);
 	m_audio_graph->SetReferenceToTimeTickVector(timeTickVector);
 	
-}
-
-void AudioTrack::ReadAndCopyDataFromInputFile(std::string inputSoundFilePath, std::string streamSoundFilePath)
-{
-	//Read data from file
-	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
-	{	
-		// Open failed, so print an error message.
-		std::cout << "Not able to open input file " <<  inputSoundFilePath << std::endl;
-		/* Print the error message from libsndfile. */
-		puts (sf_strerror (NULL)) ;
-		return;
-	} 
-		
-	if (input_sfinfo.channels > MAX_CHANNELS)
-	{
-		std::cout << "Not able to process more than" <<  MAX_CHANNELS << "channels.\n";
-		return;
-	}
-	std::cout << "Successfully loaded " << inputSoundFilePath << " saving data..." << std::endl;
-	
-	//read input data
-	std::vector<double> read_buf(BUFFER_LEN);
-	size_t read_size = 0;
-	while( (read_size = sf_read_double(inputFile, read_buf.data(), read_buf.size()) ) != 0)
-	{
-		audio_data_input_copy.insert(audio_data_input_copy.end(), read_buf.begin(), read_buf.begin() + read_size);
-	}
-	
-	//copy input audio data references to audio data stream
-	audio_data_stream_ptr->ResizeAudioStream(audio_data_input_copy.size());
-	for(size_t i=0; i < audio_data_stream_ptr->GetSize(); i++)
-	{
-		audio_data_stream_ptr->SetPointerToDataAtThisSampleIndex(&audio_data_input_copy[i],i);
-	}
-	
-	double slen;
-	//slen = audio_data_track_stream.size() * sizeof(uint16_t); //get size of data in bytes
-	slen = audio_data_stream_ptr->GetSize() * sizeof(uint16_t);
-	
-	std::cout << "Size of data in bytes: " << slen << "\n";
-	//if sample buffer is null or size of buffer data is zero, notify of error
-	if(slen == 0)
-	{
-		std::string messageString;
-		messageString.append("Failed to read audio from file.\n");
-		wxMessageBox( messageString );
-		return;
-	}
-	
-	double seconds = (1.0 * input_sfinfo.frames) / input_sfinfo.samplerate ;
-	std::cout << "Duration of sound:" << seconds << "s. \n";
-	
-	audio_data_stream_ptr->WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
-
-	/* Close input and stream files. */
-	sf_close(inputFile);
-	
-	std::string messageString;
-	messageString.append("Successfully loaded and saved a copy of audio data of");
-	messageString.append(inputSoundFilePath);
-	wxMessageBox( messageString );
-}
-
-void AudioTrack::PlotStreamAudioDataToGraph()
-{
-	m_audio_graph->PlotStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
-										verticalStart, verticalEnd, verticalResolution);
-	Refresh();
 }
 
 void AudioTrack::SetupAxisForVariable(double& start, double& end, double& resolution, int& numTick)
