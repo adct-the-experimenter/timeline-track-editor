@@ -107,38 +107,49 @@ Add a track by initializing it in the main frame of the application and then use
 
 		//Initialize Audio Track
 
-		//Initialize OpenAL Soft
+	//Initialize OpenAL Soft
+	
+	audioPlayer = new OpenALSoftPlayer();
+	
+	if(!audioPlayer->InitOpenALSoft(audioDevice,alContext))
+	{
+		std::cout << "Unable to make audio track because OpenAL SOft could not be initialized! \n";
+	}
+	else
+	{
+		audioPlayer->SetReferenceToAudioContext(alContext);
+		audioPlayer->SetReferenceToAudioDevice(audioDevice);
 		
-		audioPlayer = new OpenALSoftPlayer();
+		audioPlayer->InitBuffersForStreaming();
 		
-		if(!audioPlayer->InitOpenALSoft(audioDevice,alContext))
-		{
-			std::cout << "Unable to make audio track because OpenAL SOft could not be initialized! \n";
-		}
-		else
-		{
-			audioPlayer->SetReferenceToAudioContext(alContext);
-			audioPlayer->SetReferenceToAudioDevice(audioDevice);
-			
-			audioPlayer->InitBuffersForStreaming();
-			
-			AudioTrack* track2 = new AudioTrack("Audio");
+		audioPlayer->InitSource(&source);
 		
-			start = 0.0f; //lowest value
-			end = 1.0f; //highest value
-			numTicks = 11; //number of ticks between lowest value and highest value including zero
-			resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
+		StereoAudioTrack* track2 = new StereoAudioTrack("Audio");
+		track2->SetReferenceToSourceToManipulate(&source);
+		track2->SetReferenceToAudioPlayer(audioPlayer);
+		track2->InitTrack(timeFrame->GetTimelineWindow(),nullptr);
+		
+		double start = 0.0f; //lowest value
+		double end = 10.0f; //highest value
+		int numTicks = 11; //number of ticks between lowest value and highest value including zero
+		double resolution = 0.1; //the fineness of how much variable can be incremented/decremented by
 
-			//setup bounds for vertical axis
-			track2->SetupAxisForVariable(start,end,resolution,numTicks);
-			
-			//add track to time frame
-			timeFrame->AddTrack(track2,space);
-			
-			track2->Show();
-		}
+		//setup bounds for vertical axis
+		track2->SetupAxisForVariable(start,end,resolution,numTicks);
+		
+		timeFrame->AddSpacerBlock(50);
+		
+		int space = 20;
+		//add track to time frame
+		timeFrame->AddTrack(track2->GetReferenceToLeftChannelTrack(),space);
+		timeFrame->AddTrack(track2->GetReferenceToRightChannelTrack(),space);
+		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);
+		track2->Show();
 	}
 
+//Show Tracks and Time Frame
+
+	timeFrame->Show(true); //show the timeframe
 	
 For further customization use DoubleTrack and/or AudioTrack class as a template to create a new class to handle specific class types.
 
