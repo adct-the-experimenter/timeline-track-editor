@@ -117,6 +117,8 @@ private:
     AudioGraph* m_audio_graph;
     
     std::function < void() > func_after_var_change;
+    
+    void al_nssleep(unsigned long nsec);
 };
 
 #endif

@@ -5,6 +5,8 @@ StereoAudioTrack::StereoAudioTrack(const wxString& title) : Track(title)
 	sourceToManipulatePtr = nullptr;
 	audioPlayerPtr = nullptr;
 	
+	track_state = State::PLAYER_NULL;
+	
 	//initialize audio tracks
 	m_left_channel_track = new AudioTrack("Left Channel");
 	m_right_channel_track = new AudioTrack("Right Channel");
@@ -28,29 +30,64 @@ AudioTrack* StereoAudioTrack::GetReferenceToLeftChannelTrack(){return m_left_cha
 AudioTrack* StereoAudioTrack::GetReferenceToRightChannelTrack(){return m_right_channel_track;}
 
 //Track related functions
+void StereoAudioTrack::al_nssleep(unsigned long nsec)
+{
+    struct timespec ts, rem;
+    ts.tv_sec = nsec / 1000000000ul;
+    ts.tv_nsec = nsec % 1000000000ul;
+    while(nanosleep(&ts, &rem) == -1 && errno == EINTR){ts = rem;}
+}
 
 void StereoAudioTrack::FunctionToCallInPlayState()
 {
-	if(m_left_channel_track != nullptr)
+	switch(StereoAudioTrack::GetAudioTrackState())
 	{
-		m_left_channel_track->FunctionToCallInPlayState();
-	}
-	
-	if(m_right_channel_track != nullptr)
-	{
-		m_right_channel_track->FunctionToCallInPlayState();
+		case State::PLAYER_NULL:
+		{
+			audioPlayerPtr->StartPlayer(sourceToManipulatePtr); //start player
+			StereoAudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player started state
+			break;
+		}
+		case State::PLAYER_PLAYING:
+		{
+			audioPlayerPtr->UpdatePlayer(sourceToManipulatePtr);
+			StereoAudioTrack::al_nssleep(10000000);
+			break;
+		}
 	}
 }
 
-void StereoAudioTrack::FunctionToCallInPauseState(){}
-void StereoAudioTrack::FunctionToCallInRewindState(){}
+void StereoAudioTrack::FunctionToCallInPauseState()
+{
+	
+}
+
+void StereoAudioTrack::FunctionToCallInRewindState()
+{
+	
+}
+
 void StereoAudioTrack::FunctionToCallInFastForwardState(){}
-void StereoAudioTrack::FunctionToCallInNullState(){}
+
+void StereoAudioTrack::FunctionToCallInNullState()
+{
+	audioPlayerPtr->StopSource(sourceToManipulatePtr);
+	audioPlayerPtr->RewindSource(sourceToManipulatePtr);
+}
     
 void StereoAudioTrack::SetReferenceToCurrentTimeVariable(double* thisTimeVariable){Track::SetReferenceToCurrentTimeVariable(thisTimeVariable);}
 void StereoAudioTrack::SetReferenceToTimeTickVector(std::vector <int> *thisVector){Track::SetReferenceToTimeTickVector(thisVector);}
 
 std::vector <int> *StereoAudioTrack::GetReferenceToTimeTickVector(){return Track::GetReferenceToTimeTickVector();}
+
+void StereoAudioTrack::SetAudioTrackState(int thisState)
+{
+	track_state = thisState;
+	m_left_channel_track->SetAudioTrackState(thisState);
+	m_right_channel_track->SetAudioTrackState(thisState);
+}
+
+int StereoAudioTrack::GetAudioTrackState(){return track_state;}
 
 void StereoAudioTrack::SetTitle(wxString thisTitle){Track::SetTitle(thisTitle);}
 wxString StereoAudioTrack::GetTitle(){return Track::GetTitle();}
@@ -98,18 +135,24 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 			
 			int channels = m_left_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath,input_sfinfo);
 			std::cout << "channels:" << channels << std::endl;
-			//create a copy of file to reference for editing
-			//also put data into stream
-			m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath,input_sfinfo);
-			m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath,input_sfinfo);
+			
 			
 			if(channels == 1)
 			{
+				//create a copy of file to reference for editing
+				//also put data into stream
+				m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath,input_sfinfo);
+				m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath,input_sfinfo);
 				//graph all data in channel to one graph
 				m_left_channel_track->PlotOneChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
 			}
 			else if(channels == 2)
-			{	
+			{
+				//create a copy of file to reference for editing
+				//also put data into stream
+				m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath,input_sfinfo);
+				m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath,input_sfinfo);
+					
 				//plot left channel data to one graph 
 				m_left_channel_track->PlotLeftChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
 				//plot right channel data to other graph
@@ -118,7 +161,7 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 			}
 			
 			//open file to play during streaming
-			//audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
 			 
 		} 
 	}

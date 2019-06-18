@@ -24,7 +24,7 @@
 #include "AL/alext.h" //header for OpenAL Soft
 
 #define NUM_BUFFERS 4
-#define BUFFER_TIME_MS 200 // 200 milliseconds 
+#define BUFFER_TIME_MS 500 // 200 milliseconds 
 #define MAX_CHANNELS 2
 
 class OpenALSoftPlayer

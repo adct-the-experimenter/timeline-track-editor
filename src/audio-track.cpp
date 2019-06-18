@@ -162,7 +162,7 @@ void AudioTrack::PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* au
 
 //Track related functions
 
-void al_nssleep(unsigned long nsec)
+void AudioTrack::al_nssleep(unsigned long nsec)
 {
     struct timespec ts, rem;
     ts.tv_sec = nsec / 1000000000ul;

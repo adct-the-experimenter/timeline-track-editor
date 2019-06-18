@@ -169,7 +169,9 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		//add left channel track and right channel track to time frame
 		timeFrame->AddTrack(track2->GetReferenceToLeftChannelTrack(),space);
 		timeFrame->AddTrack(track2->GetReferenceToRightChannelTrack(),space);
+		
 		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);
+		timeFrame->AddTrackFunctionToCallInTimerLoopNullState(track2);
 		track2->Show();
 	}
 	

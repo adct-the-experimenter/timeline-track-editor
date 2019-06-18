@@ -190,7 +190,7 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	frame_size = sfinfo.channels * (sfinfo.format & 0xFF);
 
     /* Set the buffer size, given the desired millisecond length. */
-    buffer_size = (uint64_t)sample_rate * double(BUFFER_TIME_MS)/1000 * frame_size;
+    buffer_size = (round ((uint64_t)sample_rate * (double(BUFFER_TIME_MS))/1000 * frame_size));
     
     return 1;
 }
@@ -207,20 +207,21 @@ void OpenALSoftPlayer::ClosePlayerFile()
 /* Prebuffers some audio from the file, and starts playing the source */
 int OpenALSoftPlayer::StartPlayer(ALuint* source)
 {
+	std::cout << "In start player!\n";
+	
     size_t i;
 
     /* Rewind the source position and clear the buffer queue */
     alSourceRewind(*source);
     alSourcei(*source, AL_BUFFER, 0);
     
-    if(buffer_size != 0)
-    {
-		return 0;
-	}
+    //prevent program from going further if buffer size is zero
+    if(buffer_size == 0){return 0;}
 	
     /* Fill the buffer queue */
     for(i = 0;i < NUM_BUFFERS;i++)
     {
+		std::cout << "i:" << i << std::endl;
          //setup data for buffer
 		std::vector<double> data;
 		std::vector<double> read_buf(buffer_size);
@@ -230,23 +231,19 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}
 
-		uint32_t slen = data.size() * sizeof(uint16_t); //get size of data in bytes
+		uint32_t slen = data.size(); //get size of data in bytes
 
-		std::cout << "Size of data in bytes: " << slen << "\n";
+		std::cout << "Number of samples in data buffer : " << slen << "\n";
 		//if sample buffer is null or size of buffer data is zero, notify of error
 		if(slen == 0)
 		{
-			std::cout << "Failed to read audio from file.\n";
-			return 0;
+			std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
+			break;
 		}
-
-		double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
-		std::cout << "Duration of sound:" << seconds << "s. \n";
 
 		// Buffer the audio data into buffer array
 	
 		//set buffer data
-		//alBufferData(buffer, format, data, slen, frequency);
 		alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
     }
     
