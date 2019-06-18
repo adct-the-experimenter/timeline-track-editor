@@ -186,11 +186,28 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	
     sample_rate = sfinfo.samplerate;
 	
-	//frame size is number of channels * audio bit size
-	frame_size = sfinfo.channels * (sfinfo.format & 0xFF);
+	//bit size is the size of a double because that is format for stream.wav
+	std::cout << "bit type: " << (sfinfo.format & SF_FORMAT_SUBMASK) << std::endl;
+	int bit_size = 0;
+	
+	//get audio bit size 
+	switch(sfinfo.format & SF_FORMAT_SUBMASK)
+	{
+		case SF_FORMAT_PCM_S8:{bit_size = sizeof(int8_t); break;}
+		case SF_FORMAT_PCM_16:{bit_size = sizeof(int16_t); break;}
+		case SF_FORMAT_PCM_32:{bit_size = sizeof(int32_t); break;}
+		case SF_FORMAT_PCM_U8 :{bit_size = sizeof(uint8_t);break;}
+		case SF_FORMAT_FLOAT:{bit_size = sizeof(float); break;}
+		case SF_FORMAT_DOUBLE:{bit_size = sizeof(double); break;}
+	}
+	
+	
+	
+	frame_size = sfinfo.channels * bit_size;
 
     /* Set the buffer size, given the desired millisecond length. */
-    buffer_size = (round ((uint64_t)sample_rate * (double(BUFFER_TIME_MS))/1000 * frame_size));
+    buffer_size = (uint64_t)sample_rate * (double(BUFFER_TIME_MS))/1000 * frame_size;
+    std::cout << "buffer size:" << buffer_size << std::endl;
     
     return 1;
 }
@@ -217,21 +234,22 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     
     //prevent program from going further if buffer size is zero
     if(buffer_size == 0){return 0;}
+    
 	
     /* Fill the buffer queue */
     for(i = 0;i < NUM_BUFFERS;i++)
     {
 		std::cout << "i:" << i << std::endl;
-         //setup data for buffer
-		std::vector<double> data;
-		std::vector<double> read_buf(buffer_size);
+		
+        std::vector<uint16_t> data;
+		std::vector<int16_t> read_buf(buffer_size);
 		size_t read_size = 0;
-		while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
+		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
 		{
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}
 
-		uint32_t slen = data.size(); //get size of data in bytes
+		int slen = data.size() * sizeof(uint16_t); //get size of data in bytes
 
 		std::cout << "Number of samples in data buffer : " << slen << "\n";
 		//if sample buffer is null or size of buffer data is zero, notify of error
@@ -293,10 +311,10 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
          * back on the source */
          
          //setup data for buffer
-		std::vector<double> data;
-		std::vector<double> read_buf(buffer_size);
+		std::vector<uint16_t> data;
+		std::vector<int16_t> read_buf(buffer_size);
 		size_t read_size = 0;
-		while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
+		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
 		{
 			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
 		}
@@ -333,8 +351,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 
         /* If no buffers are queued, playback is finished */
         alGetSourcei(*source, AL_BUFFERS_QUEUED, &queued);
-        if(queued == 0)
-            return 0;
+        if(queued == 0){return 0;}
 
         alSourcePlay(*source);
         if(alGetError() != AL_NO_ERROR)
