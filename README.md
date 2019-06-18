@@ -140,7 +140,15 @@ Add a track by initializing it in the main frame of the application and then use
 		timeFrame->AddSpacerBlock(50);
 		
 		int space = 20;
-		//add track to time frame
+		
+		//setup browse button and text label for stereo audio track
+		wxBoxSizer* hboxButtonText = new wxBoxSizer(wxHORIZONTAL);
+		wxStaticText *textButtonText = new wxStaticText(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Stereo Audio Track"),wxDefaultPosition );
+		hboxButtonText->Add(textButtonText);
+		hboxButtonText->Add(browseButton);
+		timeFrame->AddBoxSizer(hboxButtonText);
+		
+		//add left channel track and right channel track to time frame
 		timeFrame->AddTrack(track2->GetReferenceToLeftChannelTrack(),space);
 		timeFrame->AddTrack(track2->GetReferenceToRightChannelTrack(),space);
 		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);

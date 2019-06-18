@@ -140,6 +140,10 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		StereoAudioTrack* track2 = new StereoAudioTrack("Audio");
 		track2->SetReferenceToSourceToManipulate(&source);
 		track2->SetReferenceToAudioPlayer(audioPlayer);
+		
+		wxButton* browseButton = new wxButton(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Browse"), wxDefaultPosition, wxSize(70, 30) );
+		track2->SetReferenceToBrowseButton(browseButton);
+		
 		track2->InitTrack(timeFrame->GetTimelineWindow(),nullptr);
 		
 		double start = 0.0f; //lowest value
@@ -153,7 +157,16 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		timeFrame->AddSpacerBlock(50);
 		
 		int space = 20;
-		//add track to time frame
+		
+		
+		//setup browse button and text label for stereo audio track
+		wxBoxSizer* hboxButtonText = new wxBoxSizer(wxHORIZONTAL);
+		wxStaticText *textButtonText = new wxStaticText(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Stereo Audio Track"),wxDefaultPosition );
+		hboxButtonText->Add(textButtonText);
+		hboxButtonText->Add(browseButton);
+		timeFrame->AddBoxSizer(hboxButtonText);
+		
+		//add left channel track and right channel track to time frame
 		timeFrame->AddTrack(track2->GetReferenceToLeftChannelTrack(),space);
 		timeFrame->AddTrack(track2->GetReferenceToRightChannelTrack(),space);
 		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);

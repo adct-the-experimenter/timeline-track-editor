@@ -22,6 +22,8 @@ StereoAudioTrack::StereoAudioTrack(const wxString& title) : Track(title)
 void StereoAudioTrack::SetReferenceToSourceToManipulate(ALuint* source){sourceToManipulatePtr = source;}
 void StereoAudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
 
+void StereoAudioTrack::SetReferenceToBrowseButton(wxButton* thisButton){browseButton = thisButton;}
+
 AudioTrack* StereoAudioTrack::GetReferenceToLeftChannelTrack(){return m_left_channel_track;}
 AudioTrack* StereoAudioTrack::GetReferenceToRightChannelTrack(){return m_right_channel_track;}
 
@@ -56,7 +58,6 @@ wxString StereoAudioTrack::GetTitle(){return Track::GetTitle();}
 void StereoAudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
 	
-	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,20), wxSize(70, 30) );
 	browseButton->Bind(wxEVT_BUTTON, &StereoAudioTrack::OnBrowse,this);
 	
 	Track::SetReferenceToTimeTickVector(timeTickVector);

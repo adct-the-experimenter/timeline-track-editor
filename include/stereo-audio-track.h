@@ -12,6 +12,8 @@ public:
 	void SetReferenceToSourceToManipulate(ALuint* source);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
 	
+	void SetReferenceToBrowseButton(wxButton* thisButton);
+	
 	AudioTrack* GetReferenceToLeftChannelTrack();
 	AudioTrack* GetReferenceToRightChannelTrack();
 	
