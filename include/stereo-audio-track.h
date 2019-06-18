@@ -61,6 +61,8 @@ private:
 	//Hold data for left channel and right channel
 	std::vector <double> audio_data_input_copy;
 	
+	SF_INFO input_sfinfo;
+	
 	AudioTrack* m_left_channel_track;
 	AudioTrack* m_right_channel_track;
 	

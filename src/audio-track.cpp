@@ -50,7 +50,7 @@ void AudioTrack::SetReferenceToSourceToManipulate(ALuint* thisSource){sourceToMa
 void AudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
 
 
-int AudioTrack::GetNumberOfChannelsInAudioFile(std::string filepath)
+int AudioTrack::GetNumberOfChannelsInAudioFile(std::string filepath,SF_INFO& input_sfinfo)
 {
 	int channels = 0;
 	
@@ -72,7 +72,7 @@ int AudioTrack::GetNumberOfChannelsInAudioFile(std::string filepath)
 	return channels;
 }
 
-void AudioTrack::ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath)
+void AudioTrack::ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath,SF_INFO& input_sfinfo)
 {
 	//Read data from file
 	if (! (inputFile = sf_open (inputSoundFilePath.c_str(), SFM_READ, &input_sfinfo)))
@@ -110,7 +110,7 @@ void AudioTrack::ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_in
 	wxMessageBox( messageString );
 }
 
-void AudioTrack::CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath)
+void AudioTrack::CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath,SF_INFO& input_sfinfo)
 {
 	//copy input audio data references to audio data stream
 	audio_data_stream_ptr->ResizeAudioStream(audio_data_input_copy_ptr->size());
@@ -139,21 +139,21 @@ void AudioTrack::CopyInputDataIntoAudioDataStream(std::vector<double> *audio_dat
 	audio_data_stream_ptr->WriteStreamContentsToFile(streamSoundFilePath, input_sfinfo.format, input_sfinfo.channels, input_sfinfo.samplerate,int(BUFFER_LEN));
 }
 
-void AudioTrack::PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+void AudioTrack::PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo)
 {
 	m_audio_graph->PlotOneChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);
 	Refresh();
 }
 
-void AudioTrack::PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+void AudioTrack::PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo)
 {
 	m_audio_graph->PlotLeftChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);
 	Refresh();
 }
 
-void AudioTrack::PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr)
+void AudioTrack::PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo)
 {
 	m_audio_graph->PlotRightChannelStreamAudioDataToGraph(audio_data_stream_ptr,input_sfinfo.samplerate,
 										verticalStart, verticalEnd, verticalResolution);

@@ -95,24 +95,24 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 			
 			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 			
-			int channels = m_left_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath);
+			int channels = m_left_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath,input_sfinfo);
 			std::cout << "channels:" << channels << std::endl;
 			//create a copy of file to reference for editing
 			//also put data into stream
-			m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath);
-			m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath);
+			m_left_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath,input_sfinfo);
+			m_left_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath,input_sfinfo);
 			
 			if(channels == 1)
 			{
 				//graph all data in channel to one graph
-				m_left_channel_track->PlotOneChannelStreamAudioDataToGraph(&audio_data_stream);
+				m_left_channel_track->PlotOneChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
 			}
 			else if(channels == 2)
 			{	
 				//plot left channel data to one graph 
-				m_left_channel_track->PlotLeftChannelStreamAudioDataToGraph(&audio_data_stream);
+				m_left_channel_track->PlotLeftChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
 				//plot right channel data to other graph
-				m_right_channel_track->PlotRightChannelStreamAudioDataToGraph(&audio_data_stream);
+				m_right_channel_track->PlotRightChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
 				
 			}
 			

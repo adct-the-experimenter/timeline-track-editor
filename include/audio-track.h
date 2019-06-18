@@ -28,16 +28,16 @@ public:
 	void SetReferenceToSourceToManipulate(ALuint* thisSource);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
 	
-	int GetNumberOfChannelsInAudioFile(std::string path);
+	int GetNumberOfChannelsInAudioFile(std::string path,SF_INFO& input_sfinfo);
     
     
-    void ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath);
+    void ReadAndCopyDataFromInputFile(std::vector<double> *audio_data_input_copy_ptr,std::string inputSoundFilePath,SF_INFO& input_sfinfo);
     
-    void CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath);
+    void CopyInputDataIntoAudioDataStream(std::vector<double> *audio_data_input_copy_ptr, AudioStreamContainer* audio_data_stream_ptr,std::string streamSoundFilePath,SF_INFO& input_sfinfo);
     
-    void PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
-    void PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
-    void PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr);
+    void PlotOneChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo);
+    void PlotLeftChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo);
+    void PlotRightChannelStreamAudioDataToGraph(AudioStreamContainer* audio_data_stream_ptr,SF_INFO& input_sfinfo);
     
 //Track related Functions
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
@@ -98,17 +98,10 @@ private:
 	//pointer to audio player to use
 	OpenALSoftPlayer* audioPlayerPtr;
 	
-	//array to hold copy of audio data input
-	
-	
-	//Container for data in audio stream
-	
 	
 	//File handlers for input file and file to stream
 	SNDFILE *inputFile;
 	
-	//holds information on audio data 
-	SF_INFO input_sfinfo;
 	
 	//GUI
 	
