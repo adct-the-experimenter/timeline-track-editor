@@ -6,7 +6,7 @@ MonoAudioTrack::MonoAudioTrack(const wxString& title) : Track(title)
 	audioPlayerPtr = nullptr;
 	
 	//initialize audio tracks
-	m_channel_track = new AudioTrack("Left Channel");
+	m_channel_track = new AudioTrack("Channel");
 	
 	Connect(wxEVT_PAINT, wxPaintEventHandler(MonoAudioTrack::OnPaint));
 	Connect(wxEVT_SIZE, wxSizeEventHandler(MonoAudioTrack::OnSize));
@@ -20,6 +20,8 @@ MonoAudioTrack::MonoAudioTrack(const wxString& title) : Track(title)
 
 void MonoAudioTrack::SetReferenceToSourceToManipulate(ALuint* source){sourceToManipulatePtr = source;}
 void MonoAudioTrack::SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer){audioPlayerPtr = thisPlayer;}
+
+void MonoAudioTrack::SetReferenceToBrowseButton(wxButton* thisButton){browseButton = thisButton;}
 
 AudioTrack* MonoAudioTrack::GetReferenceToChannelTrack(){return m_channel_track;}
 
@@ -48,8 +50,6 @@ wxString MonoAudioTrack::GetTitle(){return Track::GetTitle();}
 
 void MonoAudioTrack::InitTrack(wxWindow* parent, std::vector <int> *timeTickVector)
 {
-	
-	browseButton = new wxButton(parent, wxID_ANY, wxT("Browse"), wxPoint(10,20), wxSize(70, 30) );
 	browseButton->Bind(wxEVT_BUTTON, &MonoAudioTrack::OnBrowse,this);
 	
 	Track::SetReferenceToTimeTickVector(timeTickVector);
@@ -87,10 +87,26 @@ void MonoAudioTrack::OnBrowse(wxCommandEvent& event)
 			
 			std::cout << "Stream sound file path: " << streamSoundFilePath << std::endl;
 			
-			//create a copy of file to reference for editing
+			int channels = m_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath,input_sfinfo);
+			std::cout << "channels:" << channels << std::endl;
 			
-			//open file to play during streaming
-			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			
+			
+			
+			if(channels == 1)
+			{
+				//create a copy of file to reference for editing
+				//also put data into stream
+				m_channel_track->ReadAndCopyDataFromInputFile(&audio_data_input_copy,inputSoundFilePath,input_sfinfo);
+				m_channel_track->CopyInputDataIntoAudioDataStream(&audio_data_input_copy,&audio_data_stream,streamSoundFilePath,input_sfinfo);
+				//graph all data in channel to one graph
+				m_channel_track->PlotOneChannelStreamAudioDataToGraph(&audio_data_stream,input_sfinfo);
+				
+				//open file to play during streaming
+				audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+			}
+			
+			
 			 
 		} 
 	}

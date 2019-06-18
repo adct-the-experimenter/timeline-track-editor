@@ -12,6 +12,8 @@ public:
 	void SetReferenceToSourceToManipulate(ALuint* source);
 	void SetReferenceToAudioPlayer(OpenALSoftPlayer* thisPlayer);
 	
+	void SetReferenceToBrowseButton(wxButton* thisButton);
+	
 	AudioTrack* GetReferenceToChannelTrack();
 	
 	//Audio Track related functions
@@ -57,6 +59,11 @@ private:
 	//object to hold audio data for streaming
 	AudioStreamContainer audio_data_stream;
 	
+	//Hold data for left channel and right channel
+	std::vector <double> audio_data_input_copy;
+	
+	SF_INFO input_sfinfo;
+
 	AudioTrack* m_channel_track;
 	
 	ALuint* sourceToManipulatePtr;
