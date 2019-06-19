@@ -29,6 +29,8 @@
 OpenALSoftPlayer::OpenALSoftPlayer()
 {
     infile = nullptr;
+    bit_size = 0;
+    buffer_size = 0;
 }
 
 OpenALSoftPlayer::~OpenALSoftPlayer()
@@ -188,7 +190,6 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	
 	//bit size is the size of a double because that is format for stream.wav
 	std::cout << "bit type: " << (sfinfo.format & SF_FORMAT_SUBMASK) << std::endl;
-	int bit_size = 0;
 	
 	//get audio bit size 
 	switch(sfinfo.format & SF_FORMAT_SUBMASK)
@@ -200,8 +201,6 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 		case SF_FORMAT_FLOAT:{bit_size = sizeof(float); break;}
 		case SF_FORMAT_DOUBLE:{bit_size = sizeof(double); break;}
 	}
-	
-	
 	
 	frame_size = sfinfo.channels * bit_size;
 
@@ -241,28 +240,116 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     {
 		std::cout << "i:" << i << std::endl;
 		
-        std::vector<uint16_t> data;
-		std::vector<int16_t> read_buf(buffer_size);
-		size_t read_size = 0;
-		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
+		//read data differently depending on bit size set in OpenPlayerFile
+		
+		//if data id 8-bit
+		if(bit_size == 1)
 		{
-			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+			std::vector<int> data;
+			std::vector<int> read_buf(buffer_size);
+			size_t read_size = 0;
+			while((read_size = sf_read_int(infile, read_buf.data(), read_buf.size())) != 0)
+			{
+				data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+			}
+
+			int slen = data.size() * sizeof(int); //get size of data in bytes
+
+			std::cout << "Number of samples in data buffer : " << slen << "\n";
+			//if sample buffer is null or size of buffer data is zero, notify of error
+			if(slen == 0)
+			{
+				std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
+				break;
+			}
+
+			// Buffer the audio data into buffer array
+		
+			//set buffer data
+			alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
 		}
-
-		int slen = data.size() * sizeof(uint16_t); //get size of data in bytes
-
-		std::cout << "Number of samples in data buffer : " << slen << "\n";
-		//if sample buffer is null or size of buffer data is zero, notify of error
-		if(slen == 0)
+		
+		//if data is 16-bit
+		else if(bit_size == 2)
 		{
-			std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
-			break;
-		}
+			std::vector<uint16_t> data;
+			std::vector<int16_t> read_buf(buffer_size);
+			size_t read_size = 0;
+			while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
+			{
+				data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+			}
 
-		// Buffer the audio data into buffer array
-	
-		//set buffer data
-		alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
+			int slen = data.size() * sizeof(uint16_t); //get size of data in bytes
+
+			std::cout << "Number of samples in data buffer : " << slen << "\n";
+			//if sample buffer is null or size of buffer data is zero, notify of error
+			if(slen == 0)
+			{
+				std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
+				break;
+			}
+
+			// Buffer the audio data into buffer array
+		
+			//set buffer data
+			alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
+		}
+		//else if data is 32-bit float
+		else if(bit_size == 4)
+		{
+			std::vector<float> data;
+			std::vector<float> read_buf(buffer_size);
+			size_t read_size = 0;
+			while((read_size = sf_read_float(infile, read_buf.data(), read_buf.size())) != 0)
+			{
+				data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+			}
+
+			int slen = data.size() * sizeof(float); //get size of data in bytes
+
+			std::cout << "Number of samples in data buffer : " << slen << "\n";
+			//if sample buffer is null or size of buffer data is zero, notify of error
+			if(slen == 0)
+			{
+				std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
+				break;
+			}
+
+			// Buffer the audio data into buffer array
+		
+			//set buffer data
+			alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
+		}
+		//else if data is 64-bit double
+		else if(bit_size == 8)
+		{
+			std::vector<double> data;
+			std::vector<double> read_buf(buffer_size);
+			size_t read_size = 0;
+			while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
+			{
+				data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+			}
+
+			int slen = data.size() * sizeof(double); //get size of data in bytes
+
+			std::cout << "Number of samples in data buffer : " << slen << "\n";
+			//if sample buffer is null or size of buffer data is zero, notify of error
+			if(slen == 0)
+			{
+				std::cout << "Failed to read anymore audio from file. Sample length is 0! \n";
+				break;
+			}
+
+			// Buffer the audio data into buffer array
+		
+			//set buffer data
+			alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
+		}
+		
+		
+        
     }
     
     if(alGetError() != AL_NO_ERROR)
@@ -310,38 +397,162 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
         /* Read the next chunk of data, refill the buffer, and queue it
          * back on the source */
          
-         //setup data for buffer
-		std::vector<uint16_t> data;
-		std::vector<int16_t> read_buf(buffer_size);
-		size_t read_size = 0;
-		while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
-		{
-			data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
-		}
+         //read data differently depending on the bit size set in OpenPlayerFile
+         switch(bit_size)
+         {
+			 //if 8-bit
+			 case 1:
+			 {
+				  //setup data for buffer
+				std::vector<int> data;
+				std::vector<int> read_buf(buffer_size);
+				size_t read_size = 0;
+				while((read_size = sf_read_int(infile, read_buf.data(), read_buf.size())) != 0)
+				{
+					data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+				}
 
-		slen = data.size() * sizeof(uint16_t); //get size of data in bytes
+				slen = data.size() * sizeof(int); //get size of data in bytes
+				std::cout << "Size of data in bytes: " << slen << "\n";
+				//if sample buffer is null or size of buffer data is zero, notify of error
+				if(slen == 0)
+				{
+					std::cout << "Failed to read audio from file.\n";
+					return 0;
+				}
 
-		std::cout << "Size of data in bytes: " << slen << "\n";
-		//if sample buffer is null or size of buffer data is zero, notify of error
-		if(slen == 0)
-		{
-			std::cout << "Failed to read audio from file.\n";
-			return 0;
-		}
+				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
+				std::cout << "Duration of sound:" << seconds << "s. \n";
 
-		double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
-		std::cout << "Duration of sound:" << seconds << "s. \n";
+				if(slen > 0)
+				{
+					alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
+					alSourceQueueBuffers(*source, 1, &bufid);
+				}
+				if(alGetError() != AL_NO_ERROR)
+				{
+					fprintf(stderr, "Error buffering data\n");
+					return 0;
+				}
+				break;
+			 }
+			 
+			 //if 16-bit
+			 case 2:
+			 {
+				 //setup data for buffer
+				std::vector<uint16_t> data;
+				std::vector<int16_t> read_buf(buffer_size);
+				size_t read_size = 0;
+				while((read_size = sf_read_short(infile, read_buf.data(), read_buf.size())) != 0)
+				{
+					data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+				}
 
-        if(slen > 0)
-        {
-            alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
-            alSourceQueueBuffers(*source, 1, &bufid);
-        }
-        if(alGetError() != AL_NO_ERROR)
-        {
-            fprintf(stderr, "Error buffering data\n");
-            return 0;
-        }
+				slen = data.size() * sizeof(uint16_t); //get size of data in bytes
+				std::cout << "Size of data in bytes: " << slen << "\n";
+				//if sample buffer is null or size of buffer data is zero, notify of error
+				if(slen == 0)
+				{
+					std::cout << "Failed to read audio from file.\n";
+					return 0;
+				}
+
+				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
+				std::cout << "Duration of sound:" << seconds << "s. \n";
+
+				if(slen > 0)
+				{
+					alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
+					alSourceQueueBuffers(*source, 1, &bufid);
+				}
+				if(alGetError() != AL_NO_ERROR)
+				{
+					fprintf(stderr, "Error buffering data\n");
+					return 0;
+				}
+				break;
+			 }
+			 
+			 //if 32-bit float
+			 case 4:
+			 {
+				  //setup data for buffer
+				std::vector<float> data;
+				std::vector<float> read_buf(buffer_size);
+				size_t read_size = 0;
+				while((read_size = sf_read_float(infile, read_buf.data(), read_buf.size())) != 0)
+				{
+					data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+				}
+
+				slen = data.size() * sizeof(float); //get size of data in bytes
+				std::cout << "Size of data in bytes: " << slen << "\n";
+				//if sample buffer is null or size of buffer data is zero, notify of error
+				if(slen == 0)
+				{
+					std::cout << "Failed to read audio from file.\n";
+					return 0;
+				}
+
+				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
+				std::cout << "Duration of sound:" << seconds << "s. \n";
+
+				if(slen > 0)
+				{
+					alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
+					alSourceQueueBuffers(*source, 1, &bufid);
+				}
+				if(alGetError() != AL_NO_ERROR)
+				{
+					fprintf(stderr, "Error buffering data\n");
+					return 0;
+				}
+				break;
+			 }
+			 
+			 //if 64-bit double
+			 case 8:
+			 {
+				   //setup data for buffer
+				std::vector<double> data;
+				std::vector<double> read_buf(buffer_size);
+				size_t read_size = 0;
+				while((read_size = sf_read_double(infile, read_buf.data(), read_buf.size())) != 0)
+				{
+					data.insert(data.end(), read_buf.begin(), read_buf.begin() + read_size);
+				}
+
+				slen = data.size() * sizeof(double); //get size of data in bytes
+				std::cout << "Size of data in bytes: " << slen << "\n";
+				//if sample buffer is null or size of buffer data is zero, notify of error
+				if(slen == 0)
+				{
+					std::cout << "Failed to read audio from file.\n";
+					return 0;
+				}
+
+				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
+				std::cout << "Duration of sound:" << seconds << "s. \n";
+
+				if(slen > 0)
+				{
+					alBufferData(bufid, format, &data.front(), slen, sfinfo.samplerate);
+					alSourceQueueBuffers(*source, 1, &bufid);
+				}
+				if(alGetError() != AL_NO_ERROR)
+				{
+					fprintf(stderr, "Error buffering data\n");
+					return 0;
+				}
+				break;
+			 }
+			 
+		 }
+		 
+        
+
+		
     }
 
     /* Make sure the source hasn't underrun */

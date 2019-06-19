@@ -85,6 +85,8 @@ private:
 	
 	//has info on file loaded
 	SF_INFO sfinfo;
+	
+	int bit_size;
 };
 
 #endif
