@@ -172,25 +172,7 @@ void AudioTrack::al_nssleep(unsigned long nsec)
 
 void AudioTrack::FunctionToCallInPlayState()
 {
-	if(sourceToManipulatePtr != nullptr && audioPlayerPtr != nullptr)
-	{
-		switch(AudioTrack::GetAudioTrackState())
-		{
-			case PLAYER_NULL:
-			{
-				audioPlayerPtr->StartPlayer(sourceToManipulatePtr); //start player
-				AudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player started state
-				break;
-			}
-			case PLAYER_PLAYING:
-			{
-				audioPlayerPtr->UpdatePlayer(sourceToManipulatePtr);
-				al_nssleep(10000000);
-				break;
-			}
-		}
-		
-	}
+
 }
 
 void AudioTrack::FunctionToCallInPauseState()

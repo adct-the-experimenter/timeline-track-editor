@@ -172,6 +172,7 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 		
 		timeFrame->AddTrackFunctionToCallInTimerLoopPlayState(track2);
 		timeFrame->AddTrackFunctionToCallInTimerLoopNullState(track2);
+		timeFrame->AddTrackFunctionToCallInTimerLoopPauseState(track2);
 		track2->Show();
 	}
 	

@@ -221,7 +221,7 @@ void OpenALSoftPlayer::ClosePlayerFile()
 }
 
 /* Prebuffers some audio from the file, and starts playing the source */
-int OpenALSoftPlayer::StartPlayer(ALuint* source)
+int OpenALSoftPlayer::StartPlayer(ALuint* source, double& current_time)
 {
 	std::cout << "In start player!\n";
 	
@@ -234,6 +234,11 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     //prevent program from going further if buffer size is zero
     if(buffer_size == 0){return 0;}
     
+    //convert time into sample number
+    sf_count_t current_sample_number = current_time * sfinfo.samplerate;
+    
+    //move file to current sample number
+    sf_seek(infile, current_sample_number, SEEK_CUR);
 	
     /* Fill the buffer queue */
     for(i = 0;i < NUM_BUFFERS;i++)
@@ -242,7 +247,7 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
 		
 		//read data differently depending on bit size set in OpenPlayerFile
 		
-		//if data id 8-bit
+		//if data is 8-bit
 		if(bit_size == 1)
 		{
 			std::vector<int> data;
@@ -371,7 +376,7 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source)
     return 1;
 }
 
-int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
+int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 {
     ALint processed, state;
 
@@ -396,6 +401,12 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source)
 
         /* Read the next chunk of data, refill the buffer, and queue it
          * back on the source */
+         
+         //convert time into sample number
+		sf_count_t current_sample_number = current_time * sfinfo.samplerate;
+		
+		//move file to current sample number
+		sf_seek(infile, current_sample_number, SEEK_CUR);
          
          //read data differently depending on the bit size set in OpenPlayerFile
          switch(bit_size)

@@ -62,9 +62,9 @@ public:
 	//function to close current file loaded for streaming audio
 	void ClosePlayerFile();
 	
-	int StartPlayer(ALuint* source);
+	int StartPlayer(ALuint* source,double& current_time);
 	
-	int UpdatePlayer(ALuint* source);
+	int UpdatePlayer(ALuint* source,double& current_time);
 	
 	void CloseOpenALSoft(ALCdevice* thisAudioDevice, ALCcontext* thisAudioContext);
 	
