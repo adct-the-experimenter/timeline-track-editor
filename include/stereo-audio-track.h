@@ -17,9 +17,11 @@ public:
 	enum State
     {
 		PLAYER_NULL = 0,
+		PLAYER_STOPPED,
 		PLAYER_PLAYING,
 		PLAYER_PAUSED,
-		PLAYER_REWINDING
+		PLAYER_REWINDING,
+		PLAYER_FAST_FORWARDING
 	};
 	
 	void SetAudioTrackState(int thisState);

@@ -41,21 +41,23 @@ void StereoAudioTrack::al_nssleep(unsigned long nsec)
 void StereoAudioTrack::FunctionToCallInPlayState()
 {
 	double current_time = m_left_channel_track->GetCurrentTime();
+	
+	//get current state and do things differently depending on current state
 	switch(StereoAudioTrack::GetAudioTrackState())
 	{
 		case State::PLAYER_NULL:
 		{
 			audioPlayerPtr->StartPlayer(sourceToManipulatePtr,current_time); //start player
-			
-			StereoAudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player started state
+			StereoAudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player playing state
 			break;
 		}
 		case State::PLAYER_PAUSED:
 		{
+			audioPlayerPtr->PlaySource(sourceToManipulatePtr);
 			audioPlayerPtr->UpdatePlayer(sourceToManipulatePtr,current_time);
 			StereoAudioTrack::al_nssleep(10000000);
 			
-			StereoAudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player started state
+			StereoAudioTrack::SetAudioTrackState(PLAYER_PLAYING); //switch to player playing state
 			break;
 		}
 		case State::PLAYER_PLAYING:
@@ -64,6 +66,7 @@ void StereoAudioTrack::FunctionToCallInPlayState()
 			StereoAudioTrack::al_nssleep(10000000);
 			break;
 		}
+		
 	}
 }
 
@@ -75,14 +78,17 @@ void StereoAudioTrack::FunctionToCallInPauseState()
 
 void StereoAudioTrack::FunctionToCallInRewindState()
 {
-	
+	StereoAudioTrack::SetAudioTrackState(State::PLAYER_REWINDING);
 }
 
-void StereoAudioTrack::FunctionToCallInFastForwardState(){}
+void StereoAudioTrack::FunctionToCallInFastForwardState()
+{
+	StereoAudioTrack::SetAudioTrackState(State::PLAYER_FAST_FORWARDING);
+}
 
 void StereoAudioTrack::FunctionToCallInNullState()
 {
-	StereoAudioTrack::SetAudioTrackState(StereoAudioTrack::State::PLAYER_NULL);
+	StereoAudioTrack::SetAudioTrackState(StereoAudioTrack::State::PLAYER_PAUSED);
 	audioPlayerPtr->StopSource(sourceToManipulatePtr);
 	audioPlayerPtr->RewindSource(sourceToManipulatePtr);
 }

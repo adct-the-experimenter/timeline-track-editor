@@ -17,6 +17,7 @@
 #define	MAX_CHANNELS	2
 
 //Class used to manipulate placement of audio samples in timeline.
+//Use as helper class for StereoAudioTrack and MonoAudioTrack
 
 class AudioTrack : public Track
 {
