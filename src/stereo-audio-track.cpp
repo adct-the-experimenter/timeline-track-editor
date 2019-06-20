@@ -17,7 +17,7 @@ StereoAudioTrack::StereoAudioTrack(const wxString& title) : Track(title)
 	Connect(wxEVT_CONTEXT_MENU, wxCommandEventHandler(StereoAudioTrack::OnRightMouseClick));
 	
 	inputSoundFilePath = "";
-	streamSoundFilePath = "../resources/stream.wav";
+	streamSoundFilePath = "../resources/stream.wav"; //default file path for stream sound file
 	
 }
 
@@ -28,6 +28,8 @@ void StereoAudioTrack::SetReferenceToBrowseButton(wxButton* thisButton){browseBu
 
 AudioTrack* StereoAudioTrack::GetReferenceToLeftChannelTrack(){return m_left_channel_track;}
 AudioTrack* StereoAudioTrack::GetReferenceToRightChannelTrack(){return m_right_channel_track;}
+
+void StereoAudioTrack::SetStreamAudioFilePath(std::string filepath){streamSoundFilePath = filepath;}
 
 //Track related functions
 void StereoAudioTrack::al_nssleep(unsigned long nsec)

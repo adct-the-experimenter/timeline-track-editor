@@ -30,6 +30,8 @@ public:
 	AudioTrack* GetReferenceToLeftChannelTrack();
 	AudioTrack* GetReferenceToRightChannelTrack();
 	
+	void SetStreamAudioFilePath(std::string filepath);
+	
 	//Audio Track related functions
 	
 	
