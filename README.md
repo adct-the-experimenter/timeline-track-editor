@@ -60,7 +60,10 @@ Add a track by initializing it in the main frame of the application and then use
 
 		int space = 20; //the distance,in pixels, between track and previous item(timeline or previous track)
 		DoubleTrack* track1 = new DoubleTrack("Variable Track");
-
+		
+		//connect double track to graphical playback controls in time frame
+		track1->SetReferenceToPlaybackControls(timeFrame->GetPlaybackControlsReference());
+	
 		double start = -10.0f; //lowest value
 		double end = 10.0f; //highest value
 		int numTicks = 11; //number of ticks between lowest value and highest value including zero
@@ -125,8 +128,12 @@ Add a track by initializing it in the main frame of the application and then use
 		audioPlayer->InitSource(&source);
 		
 		StereoAudioTrack* track2 = new StereoAudioTrack("Audio");
-		track2->SetReferenceToSourceToManipulate(&source);
-		track2->SetReferenceToAudioPlayer(audioPlayer);
+		track2->SetReferenceToSourceToManipulate(&source); //connect audio track to external source
+		track2->SetReferenceToAudioPlayer(audioPlayer); //connect stereo audio track to audio player
+		
+		//connect stereo audio track to playback controls in time frame
+		track2->SetReferenceToPlaybackControls(timeFrame->GetPlaybackControlsReference());
+		
 		track2->InitTrack(timeFrame->GetTimelineWindow(),nullptr);
 		
 		double start = 0.0f; //lowest value
