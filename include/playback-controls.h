@@ -22,6 +22,8 @@ public:
 	int GetCurrentState();
 	void SetReferenceToTimelineWindow(TimelineWindow* thisTimeline);
 	
+	void SetCurrentTimePosition(double& thisTime);
+	
 	enum PlaybackState
 	{
 		STATE_NULL = 0,

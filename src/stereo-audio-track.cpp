@@ -70,18 +70,18 @@ void StereoAudioTrack::FunctionToCallInPlayState()
 			{
 				switch(audioPlayerPtr->UpdatePlayer(sourceToManipulatePtr,current_time))
 				{
-					case OpenALSoftPlayer::UpdatePlayerStatus::PLAYBACK_FINISHED:
+					case OpenALSoftPlayer::PlayerStatus::PLAYBACK_FINISHED:
 					{
 						std::cout << "Playback finished! \n";
 						
-						playbackControlsPtr->SetCurrentState(PlaybackControls::PlaybackState::STATE_PAUSE);
+						playbackControlsPtr->StopOP();
 						break;
 					}
-					case OpenALSoftPlayer::UpdatePlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE:
+					case OpenALSoftPlayer::PlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE:
 					{
 						std::cout << "No more audio to read! \n";
 						
-						playbackControlsPtr->SetCurrentState(PlaybackControls::PlaybackState::STATE_PAUSE);
+						playbackControlsPtr->StopOP();
 						break;
 					}
 					

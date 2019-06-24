@@ -96,6 +96,14 @@ void PlaybackControls::SetReferenceToTimelineWindow(TimelineWindow* thisTimeline
 void PlaybackControls::SetCurrentState(int state){current_state = state;}
 int PlaybackControls::GetCurrentState(){return current_state;}
 
+void PlaybackControls::SetCurrentTimePosition(double& thisTime)
+{
+	if(timelineWindowPtr != nullptr)
+	{
+		timelineWindowPtr->SetCurrentTimePosition(thisTime);
+	}
+}
+
 void PlaybackControls::PlayOP()
 {
 	if(timelineWindowPtr != nullptr)

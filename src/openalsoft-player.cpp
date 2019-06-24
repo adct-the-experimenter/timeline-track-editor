@@ -195,9 +195,9 @@ int OpenALSoftPlayer::OpenPlayerFile(const char *filename)
 	switch(sfinfo.format & SF_FORMAT_SUBMASK)
 	{
 		case SF_FORMAT_PCM_S8:{bit_size = sizeof(int8_t); break;}
+		case SF_FORMAT_PCM_U8 :{bit_size = sizeof(uint8_t);break;}
 		case SF_FORMAT_PCM_16:{bit_size = sizeof(int16_t); break;}
 		case SF_FORMAT_PCM_32:{bit_size = sizeof(int32_t); break;}
-		case SF_FORMAT_PCM_U8 :{bit_size = sizeof(uint8_t);break;}
 		case SF_FORMAT_FLOAT:{bit_size = sizeof(float); break;}
 		case SF_FORMAT_DOUBLE:{bit_size = sizeof(double); break;}
 	}
@@ -223,7 +223,7 @@ void OpenALSoftPlayer::ClosePlayerFile()
 /* Prebuffers some audio from the file, and starts playing the source */
 int OpenALSoftPlayer::StartPlayer(ALuint* source, double& current_time)
 {
-	std::cout << "In start player!\n";
+	//std::cout << "In start player!\n";
 	
     size_t i;
 
@@ -352,15 +352,13 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source, double& current_time)
 			//set buffer data
 			alBufferData(buffers[i], format, &data.front(), slen, sfinfo.samplerate);
 		}
-		
-		
         
     }
     
     if(alGetError() != AL_NO_ERROR)
     {
         fprintf(stderr, "Error buffering for playback\n");
-        return 0;
+        return PlayerStatus::ERROR_BUFFERING_DATA;
     }
     
 
@@ -370,14 +368,15 @@ int OpenALSoftPlayer::StartPlayer(ALuint* source, double& current_time)
     if(alGetError() != AL_NO_ERROR)
     {
         fprintf(stderr, "Error starting playback\n");
-        return 0;
+        return PlayerStatus::ERROR_STARTING_PLAYBACK;
     }
 
-    return 1;
+    return PlayerStatus::GOOD_PLAYING_STATUS;
 }
 
 int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 {
+	//std::cout << "In update player! \n";
     ALint processed, state;
 
     /* Get relevant source info */
@@ -387,7 +386,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
     if(alGetError() != AL_NO_ERROR)
     {
         fprintf(stderr, "Error checking source state.\n");
-        return UpdatePlayerStatus::ERROR_CHECKING_SOURCE_STATE;
+        return PlayerStatus::ERROR_CHECKING_SOURCE_STATE;
     }
 
     /* Unqueue and handle each processed buffer */
@@ -429,7 +428,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(slen == 0)
 				{
 					std::cout << "Failed to read anymore audio from file.\n";
-					return UpdatePlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
+					return PlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
 				}
 
 				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -443,7 +442,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(alGetError() != AL_NO_ERROR)
 				{
 					fprintf(stderr, "Error buffering data\n");
-					return UpdatePlayerStatus::ERROR_BUFFERING_DATA;
+					return PlayerStatus::ERROR_BUFFERING_DATA;
 				}
 				break;
 			 }
@@ -466,7 +465,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(slen == 0)
 				{
 					std::cout << "Failed to read anymore audio from file.\n";
-					return UpdatePlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
+					return PlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
 				}
 
 				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -480,7 +479,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(alGetError() != AL_NO_ERROR)
 				{
 					fprintf(stderr, "Error buffering data\n");
-					return UpdatePlayerStatus::ERROR_BUFFERING_DATA;
+					return PlayerStatus::ERROR_BUFFERING_DATA;
 				}
 				break;
 			 }
@@ -503,7 +502,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(slen == 0)
 				{
 					std::cout << "Failed to read audio from file.\n";
-					return UpdatePlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
+					return PlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
 				}
 
 				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -517,7 +516,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(alGetError() != AL_NO_ERROR)
 				{
 					fprintf(stderr, "Error buffering data\n");
-					return UpdatePlayerStatus::ERROR_BUFFERING_DATA;
+					return PlayerStatus::ERROR_BUFFERING_DATA;
 				}
 				break;
 			 }
@@ -540,7 +539,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(slen == 0)
 				{
 					std::cout << "Failed to read anymore audio from file.\n";
-					return UpdatePlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
+					return PlayerStatus::FAILED_TO_READ_ANYMORE_AUDIO_FROM_FILE;
 				}
 
 				double seconds = (1.0 * sfinfo.frames) / sfinfo.samplerate ;
@@ -554,7 +553,7 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
 				if(alGetError() != AL_NO_ERROR)
 				{
 					fprintf(stderr, "Error buffering data\n");
-					return UpdatePlayerStatus::ERROR_BUFFERING_DATA;
+					return PlayerStatus::ERROR_BUFFERING_DATA;
 				}
 				break;
 			 }
@@ -575,18 +574,18 @@ int OpenALSoftPlayer::UpdatePlayer(ALuint* source,double& current_time)
         alGetSourcei(*source, AL_BUFFERS_QUEUED, &queued);
         if(queued == 0)
         {
-			return UpdatePlayerStatus::PLAYBACK_FINISHED;
+			return PlayerStatus::PLAYBACK_FINISHED;
 		}
 
         alSourcePlay(*source);
         if(alGetError() != AL_NO_ERROR)
         {
             fprintf(stderr, "Error restarting playback\n");
-            return UpdatePlayerStatus::ERROR_RESTARTING_PLAYBACK;
+            return PlayerStatus::ERROR_RESTARTING_PLAYBACK;
         }
     }
 
-    return UpdatePlayerStatus::GOOD_PLAYING_STATUS;
+    return PlayerStatus::GOOD_PLAYING_STATUS;
 }
 
 void OpenALSoftPlayer::PlaySource(ALuint* thisSource)
