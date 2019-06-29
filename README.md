@@ -171,3 +171,6 @@ For further customization use DoubleTrack and/or AudioTrack class as a template 
 # To place points on graph in DoubleTrack
 Left click on graph in track to place a point in track. 
 Right Click on point in graph in track to remove a point from the graph.
+
+# Feedback
+Please send questions or comments to this email address bringerofawesomefood @ gmail . com without the spaces.
