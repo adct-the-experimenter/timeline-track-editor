@@ -1,4 +1,5 @@
 # Timeline Track Editor
+[![Open Source Helpers](https://www.codetriage.com/adct-the-experimenter/timeline-track-editor/badges/users.svg)](https://www.codetriage.com/adct-the-experimenter/timeline-track-editor)
 This is a general GUI template that has a timeline and track editor for anyone to use to get started on their project.
 A timeline in the GUI of an application is something that many people have used and needed, 
 but there was not free open-source code available that was easy to copy and implement.
