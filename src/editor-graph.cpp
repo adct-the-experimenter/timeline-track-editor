@@ -113,7 +113,7 @@ void EditorGraph::PlacePointByMouse(T& vertStart, T& vertEnd, T& vertRes,
 	
 	//make time value a multiple of timer resolution
 	thisTime = round (thisTime / (double(TIME_RESOLUTION) / 1000)) * (double(TIME_RESOLUTION) / 1000);
-	
+	//std::cout << "add time:" << thisTime << std::endl;
 	
 	legitValues = false;
 	//check if there is already a point at that time value
@@ -150,6 +150,10 @@ void EditorGraph::RemovePointByMouse(double& time,bool& legitValue)
 	
 	//convert mouse x to time value
 	double thisTime = mouseX * ((double)TIME_END_VALUE / (double)TRACK_WIDTH);
+	//make time value a multiple of timer resolution
+	thisTime = round (thisTime / (double(TIME_RESOLUTION) / 1000)) * (double(TIME_RESOLUTION) / 1000);
+	
+	//std::cout << "remove time:" << thisTime << std::endl;
 	
 	//check if there is already a point at that time value
 	if ( map_time.find(thisTime) == map_time.end() ) 
