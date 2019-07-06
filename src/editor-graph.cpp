@@ -128,8 +128,11 @@ void EditorGraph::PlacePointByMouse(T& vertStart, T& vertEnd, T& vertRes,
 		 
 		//put into vector of graph points
 		graph_points.push_back( wxPoint(mouseX,mouseY) );
+		
 		//put into time map
-		std::vector<wxPoint>::iterator it = graph_points.end();
+		//the iterator to element pushed back is actually the one before end iterator due to vectors having an extra element
+		//to carry out data operations!
+		std::vector<wxPoint>::iterator it = graph_points.end()-1; 
 		map_time.emplace(thisTime, it);
 		
 		//save time and mouse y to input variables
