@@ -223,7 +223,7 @@ void StereoAudioTrack::BrowseForInputAudioFile()
 {
 	if(audio_data_stream.GetSize() == 0)
 	{
-		wxFileDialog fileDlg(this, _("Choose the WAV file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|All files|*.*"));
+		wxFileDialog fileDlg(this, _("Choose the WAV,FLAC,OGG file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|FLAC file|*.flac|OGG file|*.ogg|All files|*.*"));
 		if (fileDlg.ShowModal() == wxID_OK)
 		{
 			wxString path = fileDlg.GetPath();
