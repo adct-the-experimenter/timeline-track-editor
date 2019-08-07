@@ -1,3 +1,5 @@
+![Image of Editor](https://raw.githubusercontent.com/adct-the-experimenter/timeline-track-editor/master/timeline-track-editor-screenshoot.png)
+
 # Timeline Track Editor
 [![Open Source Helpers](https://www.codetriage.com/adct-the-experimenter/timeline-track-editor/badges/users.svg)](https://www.codetriage.com/adct-the-experimenter/timeline-track-editor)
 This is a general GUI template that has a timeline and track editor for anyone to use to get started on their project.
