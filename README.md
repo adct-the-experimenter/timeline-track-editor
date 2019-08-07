@@ -13,7 +13,10 @@ This project aims to provide an easy-to-integrate timeline track editor that is 
 # Required Libraries
 
 wxwidgets https://www.wxwidgets.org/
+
 libsndfile https://github.com/erikd/libsndfile/
+
+OpenAL Soft https://kcat.strangesoft.net/openal.html
 
 # How to Install
 
