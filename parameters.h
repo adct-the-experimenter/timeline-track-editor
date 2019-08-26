@@ -2,6 +2,7 @@
 #define PARAMETERS_H
 
 #include <iostream>
+#include <string>
 
 enum
     {
