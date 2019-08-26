@@ -270,6 +270,8 @@ void MonoAudioTrack::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 	
 	MonoAudioTrack::render(dc);
+	
+	event.Skip();
 }
 
 void MonoAudioTrack::OnLeftMouseClick(wxMouseEvent& event)

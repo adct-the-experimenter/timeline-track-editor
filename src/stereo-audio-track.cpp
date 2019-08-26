@@ -290,6 +290,8 @@ void StereoAudioTrack::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 	
 	StereoAudioTrack::render(dc);
+	
+	event.Skip();
 }
 
 void StereoAudioTrack::OnLeftMouseClick(wxMouseEvent& event)

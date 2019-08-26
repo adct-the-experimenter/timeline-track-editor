@@ -142,6 +142,8 @@ void DoubleTrack::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 
 	DoubleTrack::render(dc);
+	
+	event.Skip();
 }
 
 void DoubleTrack::render(wxDC& dc)
@@ -149,8 +151,6 @@ void DoubleTrack::render(wxDC& dc)
 	PrepareDC(dc); //prepare device context for drawing a scrolling image
 	
 	graphEditor->render(dc,&m_vertical_var_num);
-	
-	Refresh();
 }
 
 void DoubleTrack::OnLeftMouseClick(wxMouseEvent& event)
@@ -183,6 +183,8 @@ void DoubleTrack::logic_left_click()
 		map_time_output.emplace(mouseTimePoint, output);
 	}
 	
+	Refresh();
+	
 }
 
 void DoubleTrack::logic_right_click()
@@ -197,6 +199,8 @@ void DoubleTrack::logic_right_click()
 		//remove point from the map
 		map_time_output.erase(mouseTimePoint);
 	}
+	
+	Refresh();
 }
 
 void DoubleTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction){func_after_var_change = thisFunction;}
