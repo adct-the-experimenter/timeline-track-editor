@@ -7,8 +7,8 @@ DoubleTrack::DoubleTrack(const wxString& title)  : Track (title)
 	
 	playbackControlsPtr = nullptr;
 	
-	Connect(wxEVT_PAINT, wxPaintEventHandler(DoubleTrack::OnPaint));
-	Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
+	//Connect(wxEVT_PAINT, wxPaintEventHandler(DoubleTrack::OnPaint));
+	//Connect(wxEVT_SIZE, wxSizeEventHandler(DoubleTrack::OnSize));
 	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(DoubleTrack::OnLeftMouseClick));
 	Connect(wxEVT_CONTEXT_MENU, wxCommandEventHandler(DoubleTrack::OnRightMouseClick));
 		
