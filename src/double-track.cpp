@@ -181,9 +181,11 @@ void DoubleTrack::logic_left_click()
 		
 		//put it in the map
 		map_time_output.emplace(mouseTimePoint, output);
+		
+		Refresh();
 	}
 	
-	Refresh();
+	
 	
 }
 
@@ -198,9 +200,11 @@ void DoubleTrack::logic_right_click()
 	{
 		//remove point from the map
 		map_time_output.erase(mouseTimePoint);
+		
+		Refresh();
 	}
 	
-	Refresh();
+	
 }
 
 void DoubleTrack::SetFunctionToCallAfterVariableChange(std::function < void() > thisFunction){func_after_var_change = thisFunction;}
