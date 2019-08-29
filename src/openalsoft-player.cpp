@@ -362,13 +362,15 @@ int OpenALSoftPlayer::StartPlayerBuffering(ALuint* source, double& current_time)
         return PlayerStatus::ERROR_BUFFERING_DATA;
     }
     
+    /* Now queue buffer to source */
+    alSourceQueueBuffers(*source, buffer_index, buffers);
+    
     return PlayerStatus::GOOD_START_BUFFERING;
 }
 
 int OpenALSoftPlayer::StartPlayingBuffer(ALuint* source)
 {
-	/* Now queue and start playback! */
-    alSourceQueueBuffers(*source, buffer_index, buffers);
+	//Start playback assume buffer queued
     alSourcePlay(*source);
     if(alGetError() != AL_NO_ERROR)
     {
@@ -661,6 +663,10 @@ int OpenALSoftPlayer::PlayMultipleUpdatedPlayerBuffers(std::vector <ALuint*> *so
 void OpenALSoftPlayer::PlaySource(ALuint* thisSource)
 {
 	alSourcePlay(*thisSource);
+	if(alGetError() != AL_NO_ERROR)
+    {
+        fprintf(stderr, "Error starting playback\n");
+    }
 }
 
 void OpenALSoftPlayer::PlayMultipleSources(std::vector <ALuint*> *sources_vec)
@@ -668,6 +674,10 @@ void OpenALSoftPlayer::PlayMultipleSources(std::vector <ALuint*> *sources_vec)
 	ALsizei n = sources_vec->size();
 	const ALuint *sNames = sources_vec->at(0);
 	alSourcePlayv(n,sNames);
+	if(alGetError() != AL_NO_ERROR)
+    {
+        fprintf(stderr, "Error starting playback\n");
+    }
 }
 
 void OpenALSoftPlayer::PauseSource(ALuint* thisSource)
