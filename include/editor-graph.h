@@ -54,4 +54,7 @@ private:
 	template <typename T>
 	void DrawVerticalAxis(wxDC& dc,std::vector <T> *verticalAxisVector);
 	
+	wxButton* zoomInTimeButton;
+	wxButton* zoomOutTimeButton;
+	
 };

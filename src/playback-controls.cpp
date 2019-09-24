@@ -11,11 +11,11 @@ PlaybackControls::PlaybackControls(wxWindow* parent) : wxWindow(parent, wxID_ANY
 	wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
 	
 	//initialize buttons
-	m_play_button = new wxButton(this, wxID_NEW, wxT("Play"));;
-    m_pause_button = new wxButton(this, wxID_NEW, wxT("Pause"));;
-    m_stop_button = new wxButton(this, wxID_NEW, wxT("Stop"));;
-    m_rewind_button = new wxButton(this, wxID_NEW, wxT("Rewind"));;
-    m_fast_forward_button = new wxButton(this, wxID_NEW, wxT("Fast Forward"));;
+	m_play_button = new wxButton(this, wxID_NEW, wxT("Play"));
+    m_pause_button = new wxButton(this, wxID_NEW, wxT("Pause"));
+    m_stop_button = new wxButton(this, wxID_NEW, wxT("Stop"));
+    m_rewind_button = new wxButton(this, wxID_NEW, wxT("Rewind"));
+    m_fast_forward_button = new wxButton(this, wxID_NEW, wxT("Fast Forward"));
     
     m_play_button->Bind(wxEVT_BUTTON,&PlaybackControls::Play,this);
     m_pause_button->Bind(wxEVT_BUTTON,&PlaybackControls::Pause,this);

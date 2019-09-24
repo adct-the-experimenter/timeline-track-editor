@@ -3,6 +3,8 @@
  
 EditorGraph::EditorGraph(wxWindow* parent) : wxPanel(parent)
 {
+	zoomInTimeButton = new wxButton(this, wxID_NEW, wxT("Zoom In Time"));
+	zoomOutTimeButton = new wxButton(this, wxID_NEW, wxT("Zoom Out Time"));
 	
 }
 
@@ -124,13 +126,6 @@ void EditorGraph::PlacePointByMouse(T& vertStart, T& vertEnd, T& vertRes,
 		//std::cout << "mouseY is " << mouseY << "at time " << thisTime << " in place point by mouse.";
 		//if not found
 		 
-		//put into vector of graph points
-		//graph_points.push_back( wxPoint(mouseX,mouseY) );
-		
-		//put into time map
-		//the iterator to element pushed back is actually the one before end iterator due to vectors having an extra element
-		//to carry out data operations!
-		//std::vector<wxPoint>::iterator it = graph_points.end()-1; 
 		map_time.emplace(thisTime, wxPoint(mouseX,mouseY));
 		
 		//save time and mouse y to input variables
