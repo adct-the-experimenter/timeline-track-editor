@@ -97,7 +97,13 @@ MyFrame::MyFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	wxStaticText *text = new wxStaticText(timeFrame->GetTimelineWindow(), wxID_ANY, wxT("Track for someVarToChange"),wxDefaultPosition );
 	hboxText->Add(text);
 	timeFrame->AddBoxSizer(hboxText);
-
+	
+	//create double track controls to use in double track
+	wxBoxSizer* hboxDTrack = new wxBoxSizer(wxHORIZONTAL); 
+	DoubleTrackControls* dTrackControls = new DoubleTrackControls(timeFrame->GetTimelineWindow(),hboxDTrack);
+	
+    timeFrame->AddBoxSizer(hboxDTrack);
+    
 	//set function to call after variable to manipulate has changed
 	//optional
 	track1->SetFunctionToCallAfterVariableChange(FunctionForSomeVarAfterChange);

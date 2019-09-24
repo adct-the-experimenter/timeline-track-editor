@@ -3,6 +3,7 @@
 
 #include "track.h"
 #include "editor-graph.h"
+#include "double-track-controls.h"
 
 #include <functional>   // std::function, std::negate
 #include "playback-controls.h"
@@ -13,6 +14,7 @@ class DoubleTrack : public Track
 
 public:
     DoubleTrack(const wxString& title);
+    ~DoubleTrack();
     
     virtual void InitTrack(wxWindow* parent, std::vector <int> *timeTickVector);
 	
@@ -33,6 +35,9 @@ public:
     
     void SetReferenceToPlaybackControls(PlaybackControls* controls);
 	PlaybackControls* GetReferenceToPlaybackControls();
+	
+	void SetReferenceToDoubleTrackControls(DoubleTrackControls* controls);
+    DoubleTrackControls* GetReferenceToDoubleTrackControls();
     
     void SetTitle(wxString thisTitle);
     wxString GetTitle();
@@ -74,6 +79,13 @@ private:
     std::function < void() > func_after_var_change;
     
     PlaybackControls* playbackControlsPtr;
+    
+    DoubleTrackControls* doubleTrackControlsPtr;
+    
+    wxButton* zoomInTimeButton;
+	wxButton* zoomOutTimeButton;
+	wxButton* zoomInVerticalButton;
+	wxButton* zoomOutVerticalButton;
 	
 };
 

@@ -3,10 +3,10 @@
  
 EditorGraph::EditorGraph(wxWindow* parent) : wxPanel(parent)
 {
-	zoomInTimeButton = new wxButton(this, wxID_NEW, wxT("Zoom In Time"));
-	zoomOutTimeButton = new wxButton(this, wxID_NEW, wxT("Zoom Out Time"));
+	
 	
 }
+
 
 void EditorGraph::SetReferenceToTimeTickVector(std::vector <int> *thisVector){timeTickVectorPtr = thisVector;}
 

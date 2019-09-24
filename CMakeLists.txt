@@ -40,6 +40,7 @@ set(SOURCES
 			src/audio-stream-container.cpp
 			src/openalsoft-player.cpp
 			src/double-track.cpp
+			src/double-track-controls.cpp
 			src/editor-graph.cpp
 			src/track.cpp
 			 )
