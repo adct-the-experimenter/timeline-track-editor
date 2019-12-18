@@ -250,9 +250,14 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 
 void StereoAudioTrack::BrowseForInputAudioFile()
 {
-	//clear any previous stream data stored
-	audio_data_stream.ClearStreamDataStored();
+	//object to hold audio data for streaming
+	AudioStreamContainer audio_data_stream;
 	
+	//Hold data for left channel and right channel
+	std::vector <double> audio_data_input_copy;
+	
+	//audio format info
+	SF_INFO input_sfinfo;
 	
 	if(audio_data_stream.GetSize() == 0)
 	{
@@ -263,8 +268,6 @@ void StereoAudioTrack::BrowseForInputAudioFile()
 			
 			m_left_channel_track->ClearGraph();
 			m_right_channel_track->ClearGraph();
-			
-			//audio_data_stream.ClearDataInStreamFile(streamSoundFilePath);
 			
 			wxString path = fileDlg.GetPath();
 			//use this path in your app
@@ -306,6 +309,7 @@ void StereoAudioTrack::BrowseForInputAudioFile()
 			
 			//clear data stored
 			audio_data_stream.ClearStreamDataStored();
+			audio_data_input_copy.clear();
 		} 
 	}
 }

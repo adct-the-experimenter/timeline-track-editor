@@ -238,8 +238,14 @@ void MonoAudioTrack::SetupAxisForVariable(double& start, double& end, double& re
 
 void MonoAudioTrack::OnBrowse(wxCommandEvent& event)
 {
-	//clear any previous stream data stored
-	audio_data_stream.ClearStreamDataStored();
+	//object to hold audio data for streaming
+	AudioStreamContainer audio_data_stream;
+	
+	//Hold data for left channel and right channel
+	std::vector <double> audio_data_input_copy;
+	
+	//audio format
+	SF_INFO input_sfinfo;
 	
 	if(audio_data_stream.GetSize() == 0)
 	{
@@ -259,9 +265,6 @@ void MonoAudioTrack::OnBrowse(wxCommandEvent& event)
 			int channels = m_channel_track->GetNumberOfChannelsInAudioFile(inputSoundFilePath,input_sfinfo);
 			std::cout << "channels:" << channels << std::endl;
 			
-			
-			
-			
 			if(channels == 1)
 			{
 				//create a copy of file to reference for editing
@@ -273,6 +276,10 @@ void MonoAudioTrack::OnBrowse(wxCommandEvent& event)
 				
 				//open file to play during streaming
 				audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
+				
+				//clear data stored
+				audio_data_stream.ClearStreamDataStored();
+				audio_data_input_copy.clear();
 			}
 			
 			
