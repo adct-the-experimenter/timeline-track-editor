@@ -238,11 +238,16 @@ void MonoAudioTrack::SetupAxisForVariable(double& start, double& end, double& re
 
 void MonoAudioTrack::OnBrowse(wxCommandEvent& event)
 {
+	//clear any previous stream data stored
+	audio_data_stream.ClearStreamDataStored();
+	
 	if(audio_data_stream.GetSize() == 0)
 	{
 		wxFileDialog fileDlg(this, _("Choose the WAV,FLAC,OGG file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|FLAC file|*.flac|OGG file|*.ogg|All files|*.*"));
 		if (fileDlg.ShowModal() == wxID_OK)
 		{
+			m_channel_track->ClearGraph();
+			
 			wxString path = fileDlg.GetPath();
 			//use this path in your app
 			inputSoundFilePath = std::string(path.mb_str());

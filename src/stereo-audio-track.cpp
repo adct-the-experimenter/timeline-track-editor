@@ -250,11 +250,22 @@ void StereoAudioTrack::OnBrowse(wxCommandEvent& event)
 
 void StereoAudioTrack::BrowseForInputAudioFile()
 {
+	//clear any previous stream data stored
+	audio_data_stream.ClearStreamDataStored();
+	
+	
 	if(audio_data_stream.GetSize() == 0)
 	{
 		wxFileDialog fileDlg(this, _("Choose the WAV,FLAC,OGG file"), wxEmptyString, wxEmptyString, _("WAV file|*.wav|FLAC file|*.flac|OGG file|*.ogg|All files|*.*"));
 		if (fileDlg.ShowModal() == wxID_OK)
 		{
+			//clear and free any current data 
+			
+			m_left_channel_track->ClearGraph();
+			m_right_channel_track->ClearGraph();
+			
+			//audio_data_stream.ClearDataInStreamFile(streamSoundFilePath);
+			
 			wxString path = fileDlg.GetPath();
 			//use this path in your app
 			inputSoundFilePath = std::string(path.mb_str());
@@ -292,7 +303,9 @@ void StereoAudioTrack::BrowseForInputAudioFile()
 			
 			//open file to play during streaming
 			audioPlayerPtr->OpenPlayerFile(streamSoundFilePath.c_str());
-			 
+			
+			//clear data stored
+			audio_data_stream.ClearStreamDataStored();
 		} 
 	}
 }
